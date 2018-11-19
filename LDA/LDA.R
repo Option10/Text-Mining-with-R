@@ -65,7 +65,7 @@ tokens <- tokens_tolower(tokens)
 
 # stopwords
 stop<-stopwords()
-new_stopwords<-append(stop,c("fig.","eq.","abstracttext"))
+new_stopwords<-append(stop,c("fig.","eq.","abstracttext","patients","patient","results","cell","cells","study","health"))
 tokens <- tokens_select(tokens, new_stopwords, selection = "remove")
 
 # Create our first bag-of-words model.
@@ -140,6 +140,7 @@ for (i in 1:nrow(df)) {
   }
 }
 
+df$gamma=df$gamma/sum(df$gamma[1:length(df$gamma)])
 df$pond1=0
 df$pond1=df$gamma+df$beta1
 
