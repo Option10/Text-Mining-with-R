@@ -11,6 +11,7 @@ library(tictoc)
 tic("full script")
 ##### PART 1: text mining
 
+#hlvzebiqmf
 
 # 52349 documents via importation du fichier xml.
 
