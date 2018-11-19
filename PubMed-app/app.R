@@ -171,7 +171,7 @@ server <- function(input, output) {
       ind_pos <- which(ap_top_terms$term==input$positive_query)
       topic_int_pos <- ap_top_terms$topic[ind_pos]
       
-      ind_neg <- which(ap_top_terms$term==input$negative_query)
+      ind_neg <- which(ap_top_terms$term[1:200]==input$negative_query)
       topic_int_neg <- ap_top_terms$topic[ind_neg]
 
       topic_int_tot <- setdiff(topic_int_pos,topic_int_neg)
@@ -199,6 +199,7 @@ server <- function(input, output) {
         }
       }
       
+      dfr$gamma <- dfr$gamma/sum(dfr$gamma[1:length(dfr$gamma)])          
       dfr$pond1 <- 0
       dfr$pond1 <- dfr$gamma+dfr$beta1
       
