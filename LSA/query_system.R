@@ -1,15 +1,29 @@
-query_system <- function(irlba,posQueryString,negQueryString,Abstract){
+query_system <- function(irlba,posQueryString,negQueryString,Abstract,stemming){
   
+  # Tokenization of the queries (return vector ('query','query',...))
   tokenization <- dget("tokenization.R")
   flag <- FALSE
-  
   posQuery_String <- colnames(tokenization(posQueryString,stemming,flag))
+  posQuery_Check <- colnames(tokenization(posQueryString,FALSE,flag))
+  for (i in (1:length(posQuery_String))){
+    if (is.na(match(posQuery_String[i],rownames(irlba$v)))){
+      posQuery_String[i] <- 1
+      cat("The word",posQuery_Check[i],"isn't in the abstracts \n")
+    }
+  }
+  posQuery_String <- posQuery_String [! posQuery_String %in% 1]
+  
   negQuery_String <- colnames(tokenization(negQueryString,stemming,flag))
-
-  # posQuery_String <- stemDocument(posQuery_String) # IF STEMMING
-  # flag <- match(posQuery_String, rownames(irlba$v))
-  # try(if(sum(is.na(flag)) > 0) stop("Query not found"))
-
+  negQuery_Check <- colnames(tokenization(negQueryString,FALSE,flag))
+  for (i in (1:length(negQuery_String))){
+    if (is.na(match(negQuery_String[i],rownames(irlba$v)))){
+      negQuery_String[i] <- 1
+      cat("The word",negQuery_Check[i],"isn't in the abstracts \n")
+    }
+  }
+  negQuery_String <- negQuery_String [! negQuery_String %in% 1]
+  
+  
   # negQuery_String <- stemDocument(negQuery_String) # IF STEMMING
   # flag <- match(negQuery_String, rownames(irlba$v))
   # try(if(negQuery_String != '' & sum(is.na(flag)) > 0) stop("Query not found"))
@@ -21,7 +35,7 @@ query_system <- function(irlba,posQueryString,negQueryString,Abstract){
   }
   eig_posQuery <- irlba$v[posIndex,]
   
-  if (is.null(negQuery_String)){
+  if (is.null(negQuery_String) == FALSE){
     negIndex <- vector(length = length(negQuery_String))
     for (i in (1:length(negQuery_String))) {
       negIndex[i] <- match(negQuery_String[i], rownames(irlba$v))

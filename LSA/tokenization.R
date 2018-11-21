@@ -8,9 +8,8 @@ tokenization <- function(df,stemming,flag){
   # NbrDoc <- 10000
   # Abstract <- Abstract[1:NbrDoc]
   
-  if (stemming) stemDocument(Abstract)
- 
-  
+  if (stemming) Abstract <- stemDocument(Abstract,language = "english")
+
   # Tokenize
 
   tokens <- tokens(Abstract, what = "word", 

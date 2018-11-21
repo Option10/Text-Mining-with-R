@@ -12,11 +12,11 @@ flag <- TRUE # working version   ---------------------> TODO: find the bug in LS
 
 show_topics <- FALSE # to show the best words of the topics
 query <- TRUE # to activate queries
-interactiveQueries <- FALSE # to activate interactive queries
+interactiveQueries <- TRUE # to activate interactive queries
 
 ## ---- QUERIES --------- ##
 # give a positive & negative query as a vector of strings ('querry','querry',...)
-posQuerry_String <- ('cancer')
+posQuerry_String <- ('breast cancer')
 negQuerry_String <- ('') # '' for no negative query 
 
 if (interactive() & interactiveQueries){
@@ -119,5 +119,5 @@ if (show_topics){
 if (query){
   Abstract <- as.character(df$Abstract)
   query_system <- dget("query_system.R")
-  query_system(irlba,posQuerry_String,negQuerry_String,Abstract) # TODO better solution than Abstract
+  query_system(irlba,posQuerry_String,negQuerry_String,Abstract,stemming) # TODO better solution than Abstract
 }
