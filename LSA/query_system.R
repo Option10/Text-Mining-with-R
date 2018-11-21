@@ -16,9 +16,11 @@ query_system <- function(irlba,posQueryString,negQueryString,Abstract,stemming){
   negQuery_String <- colnames(tokenization(negQueryString,stemming,flag))
   negQuery_Check <- colnames(tokenization(negQueryString,FALSE,flag))
   for (i in (1:length(negQuery_String))){
-    if (is.na(match(negQuery_String[i],rownames(irlba$v)))){
-      negQuery_String[i] <- 1
-      cat("The word",negQuery_Check[i],"isn't in the abstracts \n")
+    if (length(negQuery_String) > 0){
+      if (is.na(match(negQuery_String[i],rownames(irlba$v)))){
+        negQuery_String[i] <- 1
+        cat("The word",negQuery_Check[i],"isn't in the abstracts \n")
+      }
     }
   }
   negQuery_String <- negQuery_String [! negQuery_String %in% 1]
