@@ -1,6 +1,6 @@
 ## Extraction or load
 extract_data <- FALSE # TRUE if new load needed
-query <- '' # keep empty if you want full database
+queryPUBMED <- '' # keep empty if you want full database
 abstractSize <- c(100,3000) # min and max caracter in abstracts analysed
 new_Tokens <- TRUE # if you want to recompute tokenization
 stemming <- TRUE # to stem tokens
@@ -27,8 +27,9 @@ if (interactive() & interactiveQueries){
 if (extract_data == FALSE & file.exists("Dataframe")){
   df <- readRDS("Dataframe")
 }else{
+  print("new extraction")
   Extract_Data <- dget("Extract_Data.R")
-  df <- Extract_Data(query,abstractSize)
+  df <- Extract_Data(queryPUBMED,abstractSize)
 }
 
 ############## Tokenization ######################
@@ -36,6 +37,9 @@ if (extract_data == FALSE & file.exists("Dataframe")){
 if (new_Tokens | file.exists("tokensDF") == FALSE){
   tokenization <- dget("tokenization.R")
   tokensDF <- tokenization(df,stemming)
+  
+  saveRDS(tokensDF, file = "tokensDF", ascii = FALSE, version = NULL,
+          compress = TRUE, refhook = NULL)
 } else tokensDF <- readRDS("tokensDF")
 
 ################### LSA ##########################
@@ -110,9 +114,6 @@ if (show_topics){
 
 if (query){
   Abstract <- as.character(df$Abstract)
-  if (stemming){
-    # STEM QUERIES
-  }
   query_system <- dget("query_system.R")
   query_system(irlba,posQuerry_String,negQuerry_String,Abstract) # TODO better solution than Abstract
 }
