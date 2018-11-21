@@ -1,4 +1,4 @@
-Extract_Data <- function(query){
+Extract_Data <- function(query,abstractSize){
   library(XML)
   library(easyPubMed)
 
@@ -82,6 +82,9 @@ Extract_Data <- function(query){
   # create dataframe
   df <- data.frame(ID, Abstract, Title, Date, Author)
   rm(ID, Abstract, Title, Date, Author, Author_forename, Author_lastname)
+  
+  df <- df[complete.cases(df[ , 2]),] 
+  df <- df[nchar(as.character(df[ , 2]))<abstractSize[2] & nchar(as.character(df[ , 2]))>abstractSize[1],]
   
   # export dataframe
   saveRDS(df, file = "Dataframe", ascii = FALSE, version = NULL,

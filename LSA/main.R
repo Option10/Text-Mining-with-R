@@ -1,63 +1,51 @@
 ## Extraction or load
 extract_data <- FALSE # TRUE if new load needed
 query <- '' # keep empty if you want full database
+abstractSize <- c(100,3000) # min and max caracter in abstracts analysed
+new_Tokens <- TRUE # if you want to recompute tokenization
+stemming <- TRUE # to stem tokens
 new_LSA <- FALSE # TRUE if you want to recalculate LSA
 nv <- 100 # number of dimensions for LSA
 flag <- TRUE # working version   ---------------------> TODO: find the bug in LSA.R
 show_topics <- FALSE # to show the best words of the topics
+query <- TRUE # to activate queries
+interactiveQueries <- FALSE # to activate interactive queries
 
 ## ---- QUERIES --------- ##
-# give a positive query as a vector of strings ('querry','querry',...)
-posQuerry_String <- c('kidney')
-# give a negative query as a vector of strings ('querry','querry',...)
-negQuerry_String <- c('')
+# give a positive & negative query as a vector of strings ('querry','querry',...)
+posQuerry_String <- ('cancer')
+negQuerry_String <-  ('') # '' for no negative query 
 
+if (interactive() & interactiveQueries){
+  posQuerry_String <- readline("Give a positive query:") 
+  negQuerry_String <- readline("Give a negative query:")
+}
 
-if (new_LSA | file.exists("irlba") == FALSE){
-  if (extract_data == FALSE & file.exists("Dataframe")){
-    df <- readRDS("Dataframe")
-  }else{
-    Extract_Data <- dget("Extract_Data.R")
-    df <- Extract_Data(query)
-  }
-  
-  df <- df[complete.cases(df[ , 2]),] 
-  df <- df[nchar(as.character(df[ , 2]))<3000 & nchar(as.character(df[ , 2]))>100,] 
-  
+############# Data extraction ####################
+#------------------------------------------------#
+
+if (extract_data == FALSE & file.exists("Dataframe")){
+  df <- readRDS("Dataframe")
+}else{
+  Extract_Data <- dget("Extract_Data.R")
+  df <- Extract_Data(query,abstractSize)
+}
+
+############## Tokenization ######################
+#------------------------------------------------#
+if (new_Tokens | file.exists("tokensDF") == FALSE){
+  tokenization <- dget("tokenization.R")
+  tokensDF <- tokenization(df,stemming)
+} else tokensDF <- readRDS("tokensDF")
+
+################### LSA ##########################
+#------------------------------------------------#
+
+if (new_Tokens | new_LSA | file.exists("irlba") == FALSE){
+
   ## Data processing (preprocessing & SVD)
   if (flag) {
-    library(quanteda)
     library(irlba)
-    
-    Abstract <- as.character(df$Abstract)
-    
-    # NbrDoc <- 10000
-    # Abstract <- Abstract[1:NbrDoc]
-    
-    # Tokenize
-    print("tokenization")
-    tokens <- tokens(Abstract, what = "word", 
-                     remove_numbers = TRUE, remove_punct = TRUE,
-                     remove_symbols = TRUE, remove_hyphens = FALSE)
-    
-    # for bigrams.
-    # test.tokens <- tokens_ngrams(test.tokens, n = 1:2)
-    
-    # minimize capital letters
-    tokens <- tokens_tolower(tokens)
-    
-    # Stopwords
-    stop<-stopwords()
-    new_stopwords<-append(stop,c("fig.","eq.","e.g"))
-    tokens <- tokens_select(tokens, new_stopwords, selection = "remove")
-    tokens <- tokens_select(tokens,min_nchar = 3, selection ="keep")
-    
-    # Steming
-    # tokens <- tokens_wordstem(tokens[1,3], language = "english")
-    # print(tokens)
-    
-    # Create our first bag-of-words model dataframe.
-    tokens.matrix <- dfm(tokens)
     
     ## analyzing Tokens:
     #-------------------
@@ -80,13 +68,13 @@ if (new_LSA | file.exists("irlba") == FALSE){
     }
     print("tf-idf")
     # First step, normalize all documents via TF.
-    tokens.tf <- term.frequency(tokens.matrix)
+    tokens.tf <- term.frequency(tokensDF)
     
     # Second step, calculate the IDF vector that we will use - both
-    tokens.idf <- inverse.doc.freq(tokens.matrix)
+    tokens.idf <- inverse.doc.freq(tokensDF)
     
     # Lastly, calculate TF-IDF for our training corpus.
-    tokens.tfidf <- tf.idf(tokens.tf,tokens.idf)
+    tokens.tfidf <- tf.idf(tokens.tf,tokensDF)
     
     ## Perform SVD. Specifically, reduce dimensionality down to 'nv' columns
     #-----------------------------------------------------------------------
@@ -107,17 +95,24 @@ if (new_LSA | file.exists("irlba") == FALSE){
   }
 }else {
   irlba <- readRDS("irlba")
-  df <- readRDS("Dataframe")
-  df <- df[complete.cases(df[ , 2]),] 
-  df <- df[nchar(as.character(df[ , 2]))<3000 & nchar(as.character(df[ , 2]))>100,]
 }
-## Query system
+
+########### Topics visualization #################
+#------------------------------------------------#
 
 if (show_topics){
   visu_topic <- dget("visu_topic.R")
   visu_topic(irlba)
 }
 
-Abstract <- as.character(df$Abstract)
-query_system <- dget("query_system.R")
-query_system(irlba,posQuerry_String,negQuerry_String,Abstract) # TODO better solution that Abstract
+############### Query system #####################
+#------------------------------------------------#
+
+if (query){
+  Abstract <- as.character(df$Abstract)
+  if (stemming){
+    # STEM QUERIES
+  }
+  query_system <- dget("query_system.R")
+  query_system(irlba,posQuerry_String,negQuerry_String,Abstract) # TODO better solution than Abstract
+}
