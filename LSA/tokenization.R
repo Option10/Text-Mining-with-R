@@ -1,20 +1,18 @@
-tokenization <- function(df,stemming){
+tokenization <- function(df,stemming,flag){
   library(quanteda)
   library(tm)
   
-  Abstract <- as.character(df$Abstract)
+  if (flag) Abstract <- as.character(df$Abstract)
+  else Abstract <- df
   
   # NbrDoc <- 10000
   # Abstract <- Abstract[1:NbrDoc]
   
-  if (stemming){
-    for (i in (1:length(Abstract))){
-      Abstract <- stemDocument(Abstract)
-    }
-  }
+  if (stemming) stemDocument(Abstract)
+ 
   
   # Tokenize
-  print("tokenization")
+
   tokens <- tokens(Abstract, what = "word", 
                    remove_numbers = TRUE, remove_punct = TRUE,
                    remove_symbols = TRUE, remove_hyphens = FALSE)
@@ -33,9 +31,6 @@ tokenization <- function(df,stemming){
   
   # Create our first bag-of-words model dataframe.
   tokensDF <- dfm(tokens)
-  
-  saveRDS(tokensDF, file = "tokensDF", ascii = FALSE, version = NULL,
-          compress = TRUE, refhook = NULL)
   
   return(tokensDF)
 }

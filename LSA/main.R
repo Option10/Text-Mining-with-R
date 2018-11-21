@@ -2,11 +2,14 @@
 extract_data <- FALSE # TRUE if new load needed
 queryPUBMED <- '' # keep empty if you want full database
 abstractSize <- c(100,3000) # min and max caracter in abstracts analysed
-new_Tokens <- TRUE # if you want to recompute tokenization
-stemming <- TRUE # to stem tokens
+
+new_Tokens <- FALSE # if you want to recompute tokenization
+stemming <- FALSE # to stem tokens
+
 new_LSA <- FALSE # TRUE if you want to recalculate LSA
 nv <- 100 # number of dimensions for LSA
 flag <- TRUE # working version   ---------------------> TODO: find the bug in LSA.R
+
 show_topics <- FALSE # to show the best words of the topics
 query <- TRUE # to activate queries
 interactiveQueries <- FALSE # to activate interactive queries
@@ -14,7 +17,7 @@ interactiveQueries <- FALSE # to activate interactive queries
 ## ---- QUERIES --------- ##
 # give a positive & negative query as a vector of strings ('querry','querry',...)
 posQuerry_String <- ('cancer')
-negQuerry_String <-  ('') # '' for no negative query 
+negQuerry_String <- ('') # '' for no negative query 
 
 if (interactive() & interactiveQueries){
   posQuerry_String <- readline("Give a positive query:") 
@@ -35,8 +38,9 @@ if (extract_data == FALSE & file.exists("Dataframe")){
 ############## Tokenization ######################
 #------------------------------------------------#
 if (new_Tokens | file.exists("tokensDF") == FALSE){
+  flag0 <- TRUE
   tokenization <- dget("tokenization.R")
-  tokensDF <- tokenization(df,stemming)
+  tokensDF <- tokenization(df,stemming,flag)
   
   saveRDS(tokensDF, file = "tokensDF", ascii = FALSE, version = NULL,
           compress = TRUE, refhook = NULL)
@@ -88,8 +92,8 @@ if (new_Tokens | new_LSA | file.exists("irlba") == FALSE){
     irlba <- irlba(tokens.tfidf, nv = nv, maxit = 1000)
     
     # line names
-    rownames(irlba$v) <- colnames(tokens.matrix)
-    rownames(irlba$u) <- row.names(tokens.matrix)
+    rownames(irlba$v) <- colnames(tokensDF)
+    rownames(irlba$u) <- row.names(tokensDF)
     
     saveRDS(irlba, file = "irlba", ascii = FALSE, version = NULL,
             compress = TRUE, refhook = NULL)
