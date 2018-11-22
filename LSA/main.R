@@ -40,7 +40,7 @@ if (extract_data == FALSE & file.exists("Dataframe")){
 if (new_Tokens | file.exists("tokensDF") == FALSE){
   flag0 <- TRUE
   tokenization <- dget("tokenization.R")
-  tokensDF <- tokenization(df,stemming,flag)
+  tokensDF <- tokenization(df,stemming,flag0)
   
   saveRDS(tokensDF, file = "tokensDF", ascii = FALSE, version = NULL,
           compress = TRUE, refhook = NULL)
