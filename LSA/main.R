@@ -15,13 +15,13 @@ query <- TRUE # to activate queries
 interactiveQueries <- TRUE # to activate interactive queries
 
 ## ---- QUERIES --------- ##
-# give a positive & negative query as a vector of strings ('querry','querry',...)
-posQuerry_String <- ('breast cancer')
-negQuerry_String <- ('') # '' for no negative query 
+# give a positive & negative query as a vector of strings ('query','query',...)
+posQuery_String <- ('breast cancer')
+negQuery_String <- ('') # '' for no negative query 
 
 if (interactive() & interactiveQueries){
-  posQuerry_String <- readline("Give a positive query:") 
-  negQuerry_String <- readline("Give a negative query:")
+  posQuery_String <- readline("Give a positive query:") 
+  negQuery_String <- readline("Give a negative query:")
 }
 
 ############# Data extraction ####################
@@ -119,5 +119,5 @@ if (show_topics){
 if (query){
   Abstract <- as.character(df$Abstract)
   query_system <- dget("query_system.R")
-  query_system(irlba,posQuerry_String,negQuerry_String,Abstract,stemming) # TODO better solution than Abstract
+  query_system(irlba,posQuery_String,negQuery_String,Abstract,stemming) # TODO better solution than Abstract
 }
