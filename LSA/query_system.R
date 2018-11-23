@@ -3,7 +3,7 @@ query_system <- function(irlba,posQueryString,negQueryString,Abstract,stemming){
   # Tokenization of the queries (return vector ('query','query',...))
   tokenization <- dget("tokenization.R")
   flag <- FALSE
-  posQuery_String <- colnames(tokenization(posQueryString,stemming,flag))
+  posQuery_String <- colnames(tokenization(posQueryString,TRUE,flag))
   posQuery_Check <- colnames(tokenization(posQueryString,FALSE,flag))
   for (i in (1:length(posQuery_String))){
     if (is.na(match(posQuery_String[i],rownames(irlba$v)))){
@@ -79,7 +79,7 @@ query_system <- function(irlba,posQueryString,negQueryString,Abstract,stemming){
         negdist <- negdist + negdistMatrix[i,]
       }
     }else{negdist <- euc.dist(irlba$u, eig_negQuery)}
-    distMatrix <- 0.8*posdist - 0.2*negdist
+    distMatrix <- posdist - negdist
   }else distMatrix <- posdist
   
   names(distMatrix) <- rownames(irlba$u)
@@ -88,7 +88,7 @@ query_system <- function(irlba,posQueryString,negQueryString,Abstract,stemming){
   Result <- names(distMatrix)
   Result <- gsub(pattern = 'text',replacement = '',x = Result)
   
-  cat("Positive queries:",posQuery_String,"\n","Negative Queries:",negQuery_String,"\n")
+  cat("Positive queries:",posQuery_Check,"\n","Negative queries:",negQuery_Check,"\n")
   for (i in (1:10)) {
     num <- as.numeric(Result[i])
     cat("Result",i,"\n","Abstract",num,"\n",Abstract[num],"\n")

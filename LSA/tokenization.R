@@ -1,14 +1,27 @@
 tokenization <- function(df,stemming,flag){
   library(quanteda)
   library(tm)
+  library(foreach)
+  library(doParallel)
   
   if (flag) Abstract <- as.character(df$Abstract)
   else Abstract <- df
   
-  # NbrDoc <- 10000
+  # NbrDoc <- 1000
   # Abstract <- Abstract[1:NbrDoc]
   
-  if (stemming) Abstract <- stemDocument(Abstract,language = "english")
+  if (stemming) {
+    print("Stemming")
+    cores=detectCores()
+    cl <- makeCluster(cores[1]-1) #not to overload your computer
+    registerDoParallel(cl)
+    
+    Abstract <- foreach(n = 1:length(Abstract),.packages =c("tm")) %dopar% {
+      stemDocument(Abstract[n],language = "english")
+    }
+    stopCluster(cl)
+    Abstract <- as.character(Abstract)
+  }
 
   # Tokenize
 
@@ -29,7 +42,7 @@ tokenization <- function(df,stemming,flag){
   tokens <- tokens_select(tokens,min_nchar = 3, selection ="keep")
   
   # Create our first bag-of-words model dataframe.
-  tokensDF <- dfm(tokens)
+  tokensDF <- dfm(tokens) #,stem = stemming)
   
   return(tokensDF)
 }

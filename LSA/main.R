@@ -4,7 +4,7 @@ queryPUBMED <- '' # keep empty if you want full database
 abstractSize <- c(100,3000) # min and max caracter in abstracts analysed
 
 new_Tokens <- FALSE # if you want to recompute tokenization
-stemming <- FALSE # to stem tokens
+stemming <- TRUE # to stem tokens
 
 new_LSA <- FALSE # TRUE if you want to recalculate LSA
 nv <- 100 # number of dimensions for LSA
@@ -16,7 +16,7 @@ interactiveQueries <- TRUE # to activate interactive queries
 
 ## ---- QUERIES --------- ##
 # give a positive & negative query as a vector of strings ('query','query',...)
-posQuery_String <- ('breast cancer')
+posQuery_String <- ('')
 negQuery_String <- ('') # '' for no negative query 
 
 if (interactive() & interactiveQueries){
@@ -37,7 +37,7 @@ if (extract_data == FALSE & file.exists("Dataframe")){
 
 ############## Tokenization ######################
 #------------------------------------------------#
-if (new_Tokens | file.exists("tokensDF") == FALSE){
+if (new_Tokens | new_LSA | file.exists("tokensDF") == FALSE){
   flag0 <- TRUE
   tokenization <- dget("tokenization.R")
   tokensDF <- tokenization(df,stemming,flag0)

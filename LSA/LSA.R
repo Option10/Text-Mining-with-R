@@ -1,38 +1,7 @@
 LSA <- function(df,nv){
-  library(quanteda)
   library(irlba)
   
-  Abstract <- as.character(df$Abstract)
-  
-  # NbrDoc <- 10000
-  # Abstract <- Abstract[1:NbrDoc]
-  
-  # Tokenize
-  print("tokenization")
-  tokens <- tokens(Abstract, what = "word", 
-                   remove_numbers = TRUE, remove_punct = TRUE,
-                   remove_symbols = TRUE, remove_hyphens = FALSE)
-  
-  # for bigrams.
-  # test.tokens <- tokens_ngrams(test.tokens, n = 1:2)
-  
-  # minimize capital letters
-  tokens <- tokens_tolower(tokens)
-  
-  # Stopwords
-  stop<-stopwords()
-  new_stopwords<-append(stop,c("fig.","eq.","e.g"))
-  tokens <- tokens_select(tokens, new_stopwords, selection = "remove")
-  tokens <- tokens_select(tokens,min_nchar = 3, selection ="keep")
-  
-  # Steming
-  # tokens <- tokens_wordstem(tokens[1,3], language = "english")
-  # print(tokens)
-  
-  # Create our first bag-of-words model dataframe.
-  tokens.matrix <- dfm(tokens)
-  
-  ## analyzing Tokens:
+    ## analyzing Tokens:
   #-------------------
   
   # Our function for calculating relative term frequency (TF)
