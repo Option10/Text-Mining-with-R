@@ -1,11 +1,17 @@
-setwd("/home/francois/Documents/Projet_Text_mining/Text-Mining-with-R/PubMed-app")
 library(shiny)
 library(topicmodels)
 library(dplyr)
 library(data.table)
+library(easyPubMed)
+
+if("shiny" %in% rownames(installed.packages()) == FALSE) {install.packages("shiny")}
+if("topicmodels" %in% rownames(installed.packages()) == FALSE) {install.packages("topicmodels")}
+if("dplyr" %in% rownames(installed.packages()) == FALSE) {install.packages("dplyr")}
+if("data.table" %in% rownames(installed.packages()) == FALSE) {install.packages("data.table")}
+
 
 df <- readRDS("/home/francois/Documents/Projet_Text_mining/Text-Mining-with-R/PubMed-app/Dataframe_1")
-irlba <- readRDS("/home/francois/Documents/Projet_Text_mining/Text-Mining-with-R/LSA/irlba")
+irlba <- readRDS("/home/francois/Documents/Projet_Text_mining/Text-Mining-with-R/PubMed-app/data/irlba")
 ap_documents <- readRDS("data/ap_documents.rds")
 ap_lda <- readRDS("data/ap_lda.rds")
 ap_topics <- readRDS("data/ap_topics.rds")
@@ -39,6 +45,11 @@ mycss <- "
 }
 "
 
+Strings <- data.frame("noPosQuery" = "Your positive querry isn't significant in any of our topics, try an other research"
+                      , "noNegQuery" = "Sorry, we will not take into account the negative request"
+                      , "insignificantNegQuery" = "Your negative querry isn't significant in any of our topics, try an other research or continue")
+
+
 ############################## User Interface ##############################
 ui <- fluidPage(
   
@@ -50,7 +61,7 @@ ui <- fluidPage(
     
     #side panel ---------------------
     sidebarPanel(width = 3,
-      textInput("positive_query","Search:",value = "drug"),
+      textInput("positive_query","Search:",value = "breast"),
       textInput("negative_query","negative querry:",value = ""),
       helpText("It is possible to add a negative querry in order to avoid certain topics"),
       selectInput("method", 
@@ -88,12 +99,20 @@ server <- function(input, output) {
       
         
       # input$positive_query <- stemDocument(input$positive_query) # IF STEMMING
-      flag <- match(input$positive_query, rownames(irlba$v))
-      try(if(sum(is.na(flag)) > 0) stop("Query not found"))
+      flag1 <- match(input$positive_query, rownames(irlba$v))
       
       # input$negative_query <- stemDocument(input$negative_query) # IF STEMMING
-      flag <- match(input$negative_query, rownames(irlba$v))
-      try(if(input$negative_query != '' & sum(is.na(flag)) > 0) stop("Query not found"))
+      flag2 <- match(input$negative_query, rownames(irlba$v))
+      
+      # try(if(sum(is.na(flag)) > 0) stop("Query not found"))
+      # try(if(input$negative_query != '' & sum(is.na(flag)) > 0) stop("Query not found"))
+      
+      output$error <- renderPrint({ 
+        try(if(sum(is.na(flag1)) > 0) cat(as.character(Strings$noPosQuery)))
+        try(if(input$negative_query != '' & sum(is.na(flag2)) > 0) cat(as.character(Strings$noNegQuery)))
+        
+      })
+      
       
       # Compute the queries' coordinates in SVD matrix
       posIndex <- vector(length = length(input$positive_query))
@@ -156,7 +175,7 @@ server <- function(input, output) {
       
       DT = data.table(
         Title = df[Result[1:10],3],
-        abstarct = df[Result[1:10],2],
+        abstract = df[Result[1:10],2],
         id = df[Result[1:10],1],
         date = df[Result[1:10],4],
         author = df[Result[1:10],5])
@@ -181,9 +200,9 @@ server <- function(input, output) {
       }
       
       output$error <- renderPrint({ 
-        tryCatch(if(length(topic_int_pos)<1) cat("Your positive querry isn't significant in any of our topics, try an other research"))
-        tryCatch(if(length(topic_int_neg)<1 & input$negative_query!="") cat("Your negative querry isn't significant in any of our topics, try an other research or continue"))
-        tryCatch(if(length(topic_int_tot)<1 & input$negative_query!="") cat("Sorry, we will not take into account the negative request"))
+        tryCatch(if(length(topic_int_pos)<1) cat(as.character(Strings$noPosQuery)))
+        tryCatch(if(length(topic_int_neg)<1 & input$negative_query!="") cat(as.character(Strings$noNegQuery)))
+        tryCatch(if(length(topic_int_tot)<1 & input$negative_query!="") cat(as.character(Strings$insignificantNegQuery)))
 
       })
       
@@ -228,7 +247,7 @@ server <- function(input, output) {
       
       DT = data.table(
         Title = df[tot_text[1:10],3],
-        abstarct = df[tot_text[1:10],2],
+        abstract = df[tot_text[1:10],2],
         id = df[tot_text[1:10],1],
         date = df[tot_text[1:10],4],
         author = df[tot_text[1:10],5])
@@ -271,7 +290,7 @@ server <- function(input, output) {
       
       DT = data.table(
         Title = Title[1:10],
-        abstarct = Abstract[1:10],
+        abstract = Abstract[1:10],
         id = ID[1:10],
         date = Date[1:10],
         author = Author[1:10])
@@ -282,7 +301,7 @@ server <- function(input, output) {
     
     
 ##### Print output: 
-    output$show_tot_text <- renderText({ paste("We found:",max(length(tot_text),length(Result),Article_Num),"results.") })
+    output$show_tot_text <- renderText({ paste("We found:",max(length(tot_text),length(Result)),"results.") })
     output$table <- renderTable(DT)
     
   }) # end Render OK
