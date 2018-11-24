@@ -1,28 +1,32 @@
 ## Extraction or load
-extract_data <- FALSE # TRUE if new load needed
+extract_data <- TRUE # TRUE if new load needed
 queryPUBMED <- '' # keep empty if you want full database
 abstractSize <- c(100,3000) # min and max caracter in abstracts analysed
 
-new_Tokens <- FALSE # if you want to recompute tokenization
+new_Tokens <- TRUE # if you want to recompute tokenization
 stemming <- TRUE # to stem tokens
 
-new_LSA <- FALSE # TRUE if you want to recalculate LSA
+new_LSA <- TRUE # TRUE if you want to recalculate LSA
 nv <- 100 # number of dimensions for LSA
 flag <- TRUE # working version   ---------------------> TODO: find the bug in LSA.R
 
 show_topics <- FALSE # to show the best words of the topics
 query <- TRUE # to activate queries
-interactiveQueries <- TRUE # to activate interactive queries
+interactiveQueries <- FALSE # to activate interactive queries
 
 ## ---- QUERIES --------- ##
 # give a positive & negative query as a vector of strings ('query','query',...)
-posQuery_String <- ('')
+posQuery_String <- ('cancer')
 negQuery_String <- ('') # '' for no negative query 
 
 if (interactive() & interactiveQueries){
   posQuery_String <- readline("Give a positive query:") 
   negQuery_String <- readline("Give a negative query:")
 }
+########### Package loading function##############
+#------------------------------------------------#
+
+loadPackage <- dget("loadPackage.R") # use loadPackage instead of library
 
 ############# Data extraction ####################
 #------------------------------------------------#
@@ -30,7 +34,7 @@ if (interactive() & interactiveQueries){
 if (extract_data == FALSE & file.exists("Dataframe")){
   df <- readRDS("Dataframe")
 }else{
-  print("new extraction")
+  cat("new extraction \n")
   Extract_Data <- dget("Extract_Data.R")
   df <- Extract_Data(queryPUBMED,abstractSize)
 }
@@ -53,7 +57,7 @@ if (new_Tokens | new_LSA | file.exists("irlba") == FALSE){
 
   ## Data processing (preprocessing & SVD)
   if (flag) {
-    library(irlba)
+    loadPackage("irlba")
     
     ## analyzing Tokens:
     #-------------------
@@ -74,7 +78,7 @@ if (new_Tokens | new_LSA | file.exists("irlba") == FALSE){
     tf.idf <- function(tf, idf) {
       tf * idf
     }
-    print("tf-idf")
+    cat("tf-idf \n")
     # First step, normalize all documents via TF.
     tokens.tf <- term.frequency(tokensDF)
     
@@ -88,7 +92,7 @@ if (new_Tokens | new_LSA | file.exists("irlba") == FALSE){
     #-----------------------------------------------------------------------
     
     # for our latent semantic analysis (LSA).
-    print("SVD")
+    cat("SVD \n")
     irlba <- irlba(tokens.tfidf, nv = nv, maxit = 1000)
     
     # line names

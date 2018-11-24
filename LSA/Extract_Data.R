@@ -1,7 +1,6 @@
 Extract_Data <- function(query,abstractSize){
-  library(XML)
-  library(easyPubMed)
-
+  loadPackage("XML","easyPubMed")
+  
   ############### PART 1: Information extraction ###############
   
   ## Dataset importation
@@ -35,7 +34,14 @@ Extract_Data <- function(query,abstractSize){
   
   ptm <- proc.time()
   # info extraction
+  cat("Please wait \n")
+  cat("|-----------------------------| \n")
+  k <- 0L
   for (i in 1:Article_Num) {
+    if (i/(Article_Num/30) >= k){
+      cat("|")
+      k = k +1
+    }
     ID[i] <- xmlValue(xmltop[[i]][["MedlineCitation"]][["PMID"]])
     Abstract[i] <- xmlValue(xmltop[[i]][["MedlineCitation"]][["Article"]][["Abstract"]])
     Title[i] <- xmlValue(xmltop[[i]][["MedlineCitation"]][["Article"]][["ArticleTitle"]])
@@ -44,6 +50,7 @@ Extract_Data <- function(query,abstractSize){
     Author_forename[i] <- xmlValue(xmltop[[i]][["MedlineCitation"]][["Article"]][["AuthorList"]][["Author"]][["ForeName"]])
     Author[i] <- paste(Author_lastname[i],Author_forename[i])
   }
+  cat("\n")
   proc.time() - ptm
   rm(papers)
   

@@ -1,9 +1,6 @@
 tokenization <- function(df,stemming,flag){
-  library(quanteda)
-  library(tm)
-  library(foreach)
-  library(doParallel)
-  
+  loadPackage("quanteda","tm","foreach","doParallel")
+
   if (flag) Abstract <- as.character(df$Abstract)
   else Abstract <- df
   
@@ -11,8 +8,8 @@ tokenization <- function(df,stemming,flag){
   # Abstract <- Abstract[1:NbrDoc]
   
   if (stemming) {
-    print("Stemming")
     cores=detectCores()
+    cat("Parallel stemming \n",cores,"cores detected \n")
     cl <- makeCluster(cores[1]-1) #not to overload your computer
     registerDoParallel(cl)
     
