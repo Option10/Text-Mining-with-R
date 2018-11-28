@@ -25,11 +25,6 @@ query_system <- function(irlba,posQueryString,negQueryString,Abstract,stemming){
   }
   negQuery_String <- negQuery_String [! negQuery_String %in% 1]
   
-  
-  # negQuery_String <- stemDocument(negQuery_String) # IF STEMMING
-  # flag <- match(negQuery_String, rownames(irlba$v))
-  # try(if(negQuery_String != '' & sum(is.na(flag)) > 0) stop("Query not found"))
-  
   # Compute the queries' coordinates in SVD matrix
   posIndex <- vector(length = length(posQuery_String))
   for (i in (1:length(posQuery_String))) {
@@ -45,6 +40,12 @@ query_system <- function(irlba,posQueryString,negQueryString,Abstract,stemming){
     eig_negQuery <- irlba$v[negIndex,]
   }
   
+  # combine the queries (coordinates mean)
+  if (is.null(negQuery_String) == FALSE){
+    eig_Query <- colMeans(rbind(eig_posQuery,-eig_negQuery)) # general case
+  }else if (length(posQuery_String) == 1){ eig_Query <- eig_posQuery # if only one positive query
+  }else {eig_Query <- colMeans(eig_posQuery)} # if no negative query
+  
   # This function computes the euclidean distance between the queries and each document
   euc.dist <- function(docs,query){ 
     dimDocs <- dim(docs)
@@ -54,33 +55,14 @@ query_system <- function(irlba,posQueryString,negQueryString,Abstract,stemming){
       for (j in (1:dimDocs[2])){ # TODO: remove the loop and calculate with the whole vectors
         squareSum <- squareSum + (docs[i,j] - query[j])^2
       }  
-      euc.dist[i] <- squareSum ^ 0.5
+      euc.dist[i] <- squareSum 
       squareSum <- 0
     }
     return(euc.dist)
   }
   
   # Calculate distance, order and name the rows
-  posdistMatrix <- matrix(nrow = length(posQuery_String),ncol=dim(irlba$u)[1])
-  posdist <- rep(1,length = dim(irlba$u)[1])
-  if (length(posQuery_String) > 1){
-    for (i in (1:length(posQuery_String))) {
-      posdistMatrix[i,] <- euc.dist(irlba$u, eig_posQuery[i,])
-      posdist <- posdist + posdistMatrix[i,]
-    }
-  }else{posdist <- euc.dist(irlba$u, eig_posQuery)}
-  
-  if (is.null(negQuery_String) == FALSE){
-    negdistMatrix <- matrix(1L,nrow = length(negQuery_String),ncol=dim(irlba$u)[1])
-    negdist <- rep(1,length = dim(irlba$u)[1])
-    if (length(negQuery_String) > 1){
-      for (i in (1:length(negQuery_String))) {
-        negdistMatrix[i,] <- euc.dist(irlba$u, eig_negQuery[i,])
-        negdist <- negdist + negdistMatrix[i,]
-      }
-    }else{negdist <- euc.dist(irlba$u, eig_negQuery)}
-    distMatrix <- posdist - negdist
-  }else distMatrix <- posdist
+  distMatrix <- euc.dist(irlba$u, eig_Query)
   
   names(distMatrix) <- rownames(irlba$u)
   distMatrix <- distMatrix[order(distMatrix),drop=FALSE]
@@ -93,4 +75,7 @@ query_system <- function(irlba,posQueryString,negQueryString,Abstract,stemming){
     num <- as.numeric(Result[i])
     cat("Result",i,"\n","Abstract",num,"\n",Abstract[num],"\n")
   }
+# test <- rbind(eig_Query,irlba$u[20129])
+# rownames(test) <- c("queries","abstract")
+# print(test)
 }

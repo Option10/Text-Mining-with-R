@@ -1,18 +1,18 @@
 ## Extraction or load
-extract_data <- TRUE # TRUE if new load needed
+extract_data <- FALSE # TRUE if new load needed
 queryPUBMED <- '' # keep empty if you want full database
 abstractSize <- c(100,3000) # min and max caracter in abstracts analysed
 
-new_Tokens <- TRUE # if you want to recompute tokenization
-stemming <- TRUE # to stem tokens
+new_Tokens <- FALSE # if you want to recompute tokenization
+stemming <- FALSE # to stem tokens
 
-new_LSA <- TRUE # TRUE if you want to recalculate LSA
+new_LSA <- FALSE # TRUE if you want to recalculate LSA
 nv <- 100 # number of dimensions for LSA
 flag <- TRUE # working version   ---------------------> TODO: find the bug in LSA.R
 
 show_topics <- FALSE # to show the best words of the topics
 query <- TRUE # to activate queries
-interactiveQueries <- FALSE # to activate interactive queries
+interactiveQueries <- TRUE # to activate interactive queries
 
 ## ---- QUERIES --------- ##
 # give a positive & negative query as a vector of strings ('query','query',...)
