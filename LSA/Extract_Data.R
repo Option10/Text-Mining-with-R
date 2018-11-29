@@ -28,16 +28,18 @@ Extract_Data <- function(query,abstractSize){
   Abstract <- vector()
   Title <- vector()
   Date <- vector()
-  Author_lastname <- vector()
-  Author_forename <- vector()
-  Author <- vector()
+  Authors <- vector()
+  ForeName <- vector()
+  LastName <- vector()
+  Keywordlist <- vector()
+  Keywords <-vector()
+  k <- 0L
   
-  ptm <- proc.time()
   # info extraction
+  ptm <- proc.time()
   cat("Please wait \n")
   cat("|-----------------------------| \n")
-  k <- 0L
-  for (i in 1:Article_Num) {
+  for (i in 1:Article_Num){
     if (i/(Article_Num/30) >= k){
       cat("|")
       k = k +1
@@ -46,18 +48,27 @@ Extract_Data <- function(query,abstractSize){
     Abstract[i] <- xmlValue(xmltop[[i]][["MedlineCitation"]][["Article"]][["Abstract"]])
     Title[i] <- xmlValue(xmltop[[i]][["MedlineCitation"]][["Article"]][["ArticleTitle"]])
     Date[i] <- xmlValue(xmltop[[i]][["MedlineCitation"]][["Article"]][["ArticleDate"]])
-    Author_lastname[i] <- xmlValue(xmltop[[i]][["MedlineCitation"]][["Article"]][["AuthorList"]][["Author"]][["LastName"]])
-    Author_forename[i] <- xmlValue(xmltop[[i]][["MedlineCitation"]][["Article"]][["AuthorList"]][["Author"]][["ForeName"]])
-    Author[i] <- paste(Author_lastname[i],Author_forename[i])
+    for (k in 1:5){
+      ForeName[k] <- xmlValue(xmltop[[i]][["MedlineCitation"]][["Article"]][["AuthorList"]][[k]][["ForeName"]])
+      LastName[k] <- xmlValue(xmltop[[i]][["MedlineCitation"]][["Article"]][["AuthorList"]][[k]][["LastName"]])
+      Keywordlist[k] <- xmlValue(xmltop[[i]][["MedlineCitation"]][["KeywordList"]][[k]])
+    }
+    fullnames <- paste(ForeName, LastName)
+    fullnames <- fullnames[fullnames!="NA NA"]
+    Authors[i] <- paste(fullnames, collapse = '/')
+    Keywords[i] <- paste(Keywordlist,collapse = '/')
+    
   }
   cat("\n")
   proc.time() - ptm
   rm(papers)
   
   # create dataframe
-  df <- data.frame(ID, Abstract, Title, Date, Author)
-  rm(ID, Abstract, Title, Date, Author, Author_forename, Author_lastname)
+  df <- data.frame(ID, Abstract, Title, Date, Authors, Keywords)
+  rm(ID, Abstract, Title, Date, Authors, ForeName, LastName,fullnames,Keywords, Keywordlist)
+  rm(xmltop, Article_Num, Book_count, Medline_count, i, k)
   
+  # clean dataframe
   df <- df[complete.cases(df[ , 2]),]
   df <- df[nchar(as.character(df[ , 2]))<abstractSize[2] & nchar(as.character(df[ , 2]))>abstractSize[1],]
 
