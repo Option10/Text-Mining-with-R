@@ -51,6 +51,10 @@ df <- df[nchar(as.character(df[ , 2]))<3000 & nchar(as.character(df[ , 2]))>100,
 ############### PART 2: text mining
 
 Abstract <- as.character(df$Abstract)
+Keywords <- as.character(df$Keywords)                         
+keyword_addon <- strrep(paste(gsub("/", " ", Keywords),""),2) 
+Abstract <- paste(Abstract,keyword_addon)
+
 NbrDoc<-length(Abstract)
 raw <- Abstract[1:NbrDoc]
 

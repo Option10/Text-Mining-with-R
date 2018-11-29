@@ -6,8 +6,9 @@ tokenization <- function(df,stemming,flag){
     Keywords <- as.character(df$Keywords)                         #   pour ajouter les keywords a la suite de l' Abstract
     keyword_addon <- strrep(paste(gsub("/", " ", Keywords),""),2) #   le 2 signifie qu'on ajoute 2 fois la suite de keywords 
     Abstract <- paste(Abstract,keyword_addon)                     #   on peut donc ponderer.
+  }else{
+    Abstract <- df
   } 
-  else Abstract <- df
   
   # NbrDoc <- 1000
   # Abstract <- Abstract[1:NbrDoc]
