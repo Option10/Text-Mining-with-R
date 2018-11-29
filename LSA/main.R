@@ -1,19 +1,19 @@
 ## Extraction or load
-extract_data <- FALSE # TRUE if new load needed
-queryPUBMED <- '' # keep empty if you want full database
+extract_data <- FALSE       # TRUE if new load needed
+queryPUBMED <- ''           # keep empty if you want full database
 abstractSize <- c(100,3000) # min and max caracter in abstracts analysed
 
-new_Tokens <- FALSE # if you want to recompute tokenization
-stemming <- FALSE # to stem tokens
+new_Tokens <- FALSE         # if you want to recompute tokenization
+stemming <- FALSE           # to stem tokens
 
-new_LSA <- TRUE # TRUE if you want to recalculate LSA
-nv <- 100 # number of dimensions for LSA
-flag <- TRUE # working version   ---------------------> TODO: find the bug in LSA.R
+new_LSA <- TRUE             # TRUE if you want to recalculate LSA
+nv <- 100                   # number of dimensions for LSA
+flag <- TRUE                # working version   ---------------------> TODO: find the bug in LSA.R
 
-new_LDA <- TRUE # TRUE if you want to recalculate LDA
-k <- 20L # hyper parameter for LDA
+new_LDA <- TRUE             # TRUE if you want to recalculate LDA
+k <- 20L                    # hyper parameter for LDA
 
-query <- FALSE # to activate queries
+query <- FALSE              # to activate queries
 interactiveQueries <- FALSE # to activate interactive queries
 
 ## ---- QUERIES --------- ##
@@ -25,8 +25,8 @@ if (interactive() & interactiveQueries){
   posQuery_String <- readline("Give a positive query:") 
   negQuery_String <- readline("Give a negative query:")
 }
-########### Package loading function##############
-#------------------------------------------------#
+########### Package loading function ##############
+#-------------------------------------------------#
 
 loadPackage <- dget("loadPackage.R") # use loadPackage instead of library
 
