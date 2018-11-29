@@ -6,13 +6,15 @@ abstractSize <- c(100,3000) # min and max caracter in abstracts analysed
 new_Tokens <- FALSE # if you want to recompute tokenization
 stemming <- FALSE # to stem tokens
 
-new_LSA <- FALSE # TRUE if you want to recalculate LSA
+new_LSA <- TRUE # TRUE if you want to recalculate LSA
 nv <- 100 # number of dimensions for LSA
 flag <- TRUE # working version   ---------------------> TODO: find the bug in LSA.R
 
-show_topics <- FALSE # to show the best words of the topics
-query <- TRUE # to activate queries
-interactiveQueries <- TRUE # to activate interactive queries
+new_LDA <- TRUE # TRUE if you want to recalculate LDA
+k <- 20L # hyper parameter for LDA
+
+query <- FALSE # to activate queries
+interactiveQueries <- FALSE # to activate interactive queries
 
 ## ---- QUERIES --------- ##
 # give a positive & negative query as a vector of strings ('query','query',...)
@@ -103,18 +105,51 @@ if (new_Tokens | new_LSA | file.exists("irlba") == FALSE){
             compress = TRUE, refhook = NULL)
   } else{
     LSA <- dget("LSA.R")
-    irlba <- LSA(df,nv)
+    irlba <- LSA(tokensDF,nv)
   }
 }else {
   irlba <- readRDS("irlba")
 }
 
-########### Topics visualization #################
+#################### LDA #########################
 #------------------------------------------------#
 
-if (show_topics){
-  visu_topic <- dget("visu_topic.R")
-  visu_topic(irlba)
+if (new_LDA){
+  runLDA <- dget("LDA.R")
+  runLDA(k,tokensDF)
+  if (1 == 2){
+loadPackage("dplyr","quanteda","stringr","tidytext","topicmodels","tictoc")
+  
+  tic("LDA")
+  #--------------------------------------------------------------------------
+  cat("LDA \n")
+  ap_lda <- LDA(tokensDF, k, control = list(seed = 1234))
+  
+  ap_topics <- tidy(ap_lda, matrix = "beta")
+  
+  cat("top terms")
+  ap_top_terms <- ap_topics %>%
+    group_by(topic) %>%
+    top_n(dim(tokens.dfm)[2], beta) %>%
+    ungroup() %>%
+    arrange(topic, -beta)
+  
+  ap_top_terms %>%
+    mutate(term = reorder(term, beta)) %>%
+    ggplot(aes(term, beta, fill = factor(topic))) +
+    geom_col(show.legend = FALSE) +
+    facet_wrap(~ topic, scales = "free") +
+    coord_flip()
+  
+  ap_documents <- tidy(ap_lda, matrix = "gamma")
+  
+  saveRDS(ap_top_terms, file = "LDAtop_terms", ascii = FALSE, version = NULL,
+          compress = TRUE, refhook = NULL)
+  saveRDS(ap_documents, file = "LDAdoc", ascii = FALSE, version = NULL,
+          compress = TRUE, refhook = NULL)
+  
+  toc()
+  }
 }
 
 ############### Query system #####################
