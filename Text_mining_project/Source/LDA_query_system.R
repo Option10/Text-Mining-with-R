@@ -41,27 +41,17 @@ function(posQuery_String,negQuery_String,LDAtop_terms,LDAdoc,Abstract){
   
   result <- dfr[order(-dfr$pond1),]
   
-  top_text <- select(head(result,200),"document")
+  Result <- as.numeric(gsub(pattern = 'text',replacement = '',x = result$document))
   
-  top_text_number <- 0
-  right_text <- NA
-  wrong_text <- NA
-  tot_text <- NA
-  perfect_match <- 0
+  # Abstract <- as.character(df$Abstract)
+  # 
+  # for (k in top_text_number){
+  #   right_text[match(k,top_text_number)]<-grepl(posQuery_String, Abstract[k])
+  #   wrong_text[match(k,top_text_number)]<-grepl(negQuery_String, Abstract[k])
+  # }
+  # 
+  # tot_text <- setdiff(top_text_number[right_text],top_text_number[wrong_text])
   
-  for (j in 1:200) {
-    top_text_number[j] <- as.numeric(as.character(gsub("text",'',top_text[j,1])))
-  }
-  
-  Abstract <- as.character(df$Abstract)
-  
-  for (k in top_text_number){
-    right_text[match(k,top_text_number)]<-grepl(posQuery_String, Abstract[k])
-    wrong_text[match(k,top_text_number)]<-grepl(negQuery_String, Abstract[k])
-  }
-  
-  tot_text <- setdiff(top_text_number[right_text],top_text_number[wrong_text])
-  
-  return(tot_text)
+  return(Result)
   
 }
