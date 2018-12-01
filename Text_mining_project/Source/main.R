@@ -139,7 +139,7 @@ if (LSAquery){
   
   cat("Positive queries:",posQuery_String,"\n","Negative queries:",negQuery_String,"\n")
   for (i in (1:10)) {
-    cat("Result",i,"\n","Abstract",num,"\n",Abstract[num],"\n")
+    cat("Result",i,"\n","Abstract",Result[i],"\n",Abstract[Result[i]],"\n")
   }
 }
 if (LDAquery){

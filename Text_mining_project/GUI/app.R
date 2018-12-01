@@ -1,7 +1,7 @@
 setwd("~/Text-Mining-with-R/Text_mining_project")
 
 loadPackage <- dget("Source/loadPackage.R")
-loadPackage("shiny","topicmodels","dplyr","data.table","easyPubMed","XML")
+loadPackage("shiny","topicmodels","dplyr","data.table","easyPubMed","XML","quanteda","tm","foreach","doParallel")
 
 
 df <- readRDS("Data/Dataframe") # row data
