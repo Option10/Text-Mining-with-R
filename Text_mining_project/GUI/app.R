@@ -115,10 +115,8 @@ server <- function(input, output) {
       
       query_system <- dget("Source/LDA_query_system.R")
       
-      res <- query_system(input$positive_query,input$negative_query,ap_top_terms,ap_documents,df$Abstract)
-      Result <- res[1]
-      output$error <- res[2]
-      
+      Result <- query_system(input$positive_query,input$negative_query,ap_top_terms,ap_documents,df$Abstract)
+
       DT = data.table(
         Title = df$Title[Result[1:10]],
         abstract = df$Abstract[Result[1:10]],

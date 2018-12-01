@@ -57,9 +57,9 @@ query_system <- function(irlba,posQueryString,negQueryString,Abstract,stemming){
     squareSum <- 0
     euc.dist <- vector(length=dimDocs[1])
     for (i in (1:dimDocs[1])) {
-      for (j in (1:dimDocs[2])){ # TODO: remove the loop and calculate with the whole vectors
-        squareSum <- squareSum + (docs[i,j] - query[j])^2
-      }  
+     
+      squareSum <- squareSum + sum((docs[i,] - query)^2)
+        
       euc.dist[i] <- squareSum 
       squareSum <- 0
     }

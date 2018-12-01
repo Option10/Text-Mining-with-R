@@ -3,7 +3,7 @@ setwd("~/Text-Mining-with-R/Text_mining_project")
 loadPackage <- dget("Source/loadPackage.R")
 loadPackage("quanteda","tm","foreach","doParallel","XML","easyPubMed","dplyr")
 
-extract_data <- TRUE       # TRUE if new load needed
+extract_data <- FALSE       # TRUE if new load needed
 queryPUBMED <- ''           # keep empty if you want full database
 abstractSize <- c(100,3000) # min and max caracter in abstracts analysed
 
@@ -45,6 +45,9 @@ if (extract_data == FALSE & file.exists("Data/Dataframe")){
   cat("new extraction \n")
   Extract_Data <- dget("Source/Extract_Data.R")
   df <- Extract_Data(queryPUBMED,abstractSize)
+  # export dataframe
+  saveRDS(df, file = "Data/Dataframe", ascii = FALSE, version = NULL,
+          compress = TRUE, refhook = NULL)
 }
 
 ############## Tokenization ######################

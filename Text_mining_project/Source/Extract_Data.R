@@ -71,9 +71,5 @@ Extract_Data <- function(query,abstractSize){
   df <- df[complete.cases(df[ , 2]),]
   df <- df[nchar(as.character(df[ , 2]))<abstractSize[2] & nchar(as.character(df[ , 2]))>abstractSize[1],]
 
-  # export dataframe
-  saveRDS(df, file = "Data/Dataframe", ascii = FALSE, version = NULL,
-          compress = TRUE, refhook = NULL)
-
   return(df)  
 }

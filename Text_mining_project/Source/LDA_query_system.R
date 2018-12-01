@@ -18,23 +18,21 @@ function(posQuery_String,negQuery_String,LDAtop_terms,LDAdoc,Abstract){
     topic_int_tot <- topic_int_pos
   }
   
-  error <- renderPrint({ 
-    tryCatch(if(length(topic_int_pos)<1) cat(as.character(Strings$noPosQuery)))
-    tryCatch(if(length(topic_int_neg)<1 & input$negative_query!="") cat(as.character(Strings$noNegQuery)))
-    tryCatch(if(length(topic_int_tot)<1 & input$negative_query!="") cat(as.character(Strings$insignificantNegQuery)))
-    
-  })
+  # error <- renderPrint({ 
+  #   tryCatch(if(length(topic_int_pos)<1) cat(as.character(Strings$noPosQuery)))
+  #   tryCatch(if(length(topic_int_neg)<1 & negQuery_String!="") cat(as.character(Strings$noNegQuery)))
+  #   tryCatch(if(length(topic_int_tot)<1 & negQuery_String!="") cat(as.character(Strings$insignificantNegQuery)))
+  #   
+  # })
   
   ind3 <- which(ap_documents$topic %in% c(topic_int_tot))
   
   dfr <- ap_documents[c(ind3),]
   dfr$beta1=0
-  for (i in 1:nrow(dfr)) {
-    for (j in 1:length(topic_int_tot)) {
-      if (dfr$topic[i]==topic_int_tot[j]) {
-        dfr$beta1[i]<-ap_top_terms$beta[ind_pos[j]]
-      }
-    }
+ 
+  for (j in 1:length(topic_int_tot)) {
+    ind_topic <- dfr$topic == topic_int_tot[j]
+    dfr$beta1[ind_topic] <- ap_top_terms$beta[ind_pos[j]]
   }
   
   dfr$gamma <- dfr$gamma/sum(dfr$gamma[1:length(dfr$gamma)])          
@@ -58,13 +56,12 @@ function(posQuery_String,negQuery_String,LDAtop_terms,LDAdoc,Abstract){
   Abstract <- as.character(df$Abstract)
   
   for (k in top_text_number){
-    right_text[match(k,top_text_number)]<-grepl(input$positive_query, Abstract[k])
-    wrong_text[match(k,top_text_number)]<-grepl(input$negative_query, Abstract[k])
+    right_text[match(k,top_text_number)]<-grepl(posQuery_String, Abstract[k])
+    wrong_text[match(k,top_text_number)]<-grepl(negQuery_String, Abstract[k])
   }
   
   tot_text <- setdiff(top_text_number[right_text],top_text_number[wrong_text])
   
-  res <- c(tot_text,error)
-  return(res)
+  return(tot_text)
   
 }
