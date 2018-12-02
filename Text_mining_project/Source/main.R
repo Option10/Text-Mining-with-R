@@ -1,5 +1,6 @@
-## Extraction or load
 setwd("~/Text-Mining-with-R/Text_mining_project")
+
+## Extraction or load
 loadPackage <- dget("Source/loadPackage.R")
 loadPackage("quanteda","tm","foreach","doParallel","XML","easyPubMed","dplyr")
 

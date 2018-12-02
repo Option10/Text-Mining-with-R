@@ -14,7 +14,7 @@ Extract_Data <- function(query,abstractSize){
   # Option 2: 52349 documents via importation du fichier xml.
   #----------
   if (query == ''){
-     papers <- xmlParse(file = "Data/pubmed18n0924.xml")
+     papers <- xmlParse(file = "Data/database.xml")
   }
   ## Information Extraction from dataset ("papers")
   #------------------------------------------------

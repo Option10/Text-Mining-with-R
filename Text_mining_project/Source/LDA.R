@@ -24,9 +24,9 @@ ap_top_terms %>%
 
 ap_documents <- tidy(ap_lda, matrix = "gamma")
 
-saveRDS(ap_top_terms, file = "LDAtop_terms", ascii = FALSE, version = NULL,
+saveRDS(ap_top_terms, file = "Data/LDAtop_terms", ascii = FALSE, version = NULL,
           compress = TRUE, refhook = NULL)
-saveRDS(ap_documents, file = "LDAdoc", ascii = FALSE, version = NULL,
+saveRDS(ap_documents, file = "Data/LDAdoc", ascii = FALSE, version = NULL,
           compress = TRUE, refhook = NULL)
 
 toc()
