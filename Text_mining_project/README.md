@@ -28,7 +28,10 @@ The ShinyApps can be hosted on a server so the final user can access it without 
 ## Q&A 
 - How to run R  
 start the RGui or any other interface for R (Rstudio works well)   
-Linux: open a terminal, write R and it will start a session   the Rscript file.R command is also useful
+In R console: source("script.R") will run the script  
+In R script: ctrl + enter will run selected lines  
+Linux: open a terminal, write R and it will start a session   
+the Rscript file.R command directly run the script in the terminal  
 - The app is not starting (but the code runs well)  
 open the code as a script and run it  
 it won't work with source("GUI/app.R")  
