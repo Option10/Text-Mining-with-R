@@ -39,6 +39,8 @@ Extract_Data <- function(query,abstractSize){
   cat("Please wait \n")
   cat("|-----------------------------| \n")
   for (i in 1:Article_Num){
+    #if querry via PubMedQuerry, add code chunck at bottom of page.
+    # and add if(startsWith(xmlSApply(xmltop[[i]], xmlName)[1],"MedlineCitation")){...}
     if (i/(Article_Num/30) >= j){
       cat("|")
       j = j + 1L
@@ -73,3 +75,25 @@ Extract_Data <- function(query,abstractSize){
 
   return(df)  
 }
+
+# if(startsWith(xmlSApply(xmltop[[i]], xmlName)[1],"BookDocument")){
+#   Book_count=Book_count+1
+#   ID[i] <- xmlValue(xmltop[[i]][["BookDocument"]][["PMID"]])
+#   Abstract[i] <- xmlValue(xmltop[[i]][["BookDocument"]][["Abstract"]][["AbstractText"]])
+#   Title[i] <- xmlValue(xmltop[[i]][["BookDocument"]][["ArticleTitle"]])
+#   Date[i] <- xmlValue(xmltop[[i]][["BookDocument"]][["ContributionDate"]])
+#   if(startsWith(xmlName(xmltop[[i]][["BookDocument"]][["AuthorList"]][[1]][[1]]),"CollectiveName")){
+#     Authors[i]<-xmlValue(xmltop[[i]][["BookDocument"]][["AuthorList"]])
+#   }else{
+#     for (k in 1:5){
+#       ForeName[k] <- xmlValue(xmltop[[i]][["BookDocument"]][["AuthorList"]][[k]][["ForeName"]])
+#       LastName[k] <- xmlValue(xmltop[[i]][["BookDocument"]][["AuthorList"]][[k]][["LastName"]])
+#       Keywordlist[k] <- xmlValue(xmltop[[i]][["BookDocument"]][["KeywordList"]][[k]])
+#     }
+#     fullnames <- paste(ForeName, LastName)
+#     fullnames <- fullnames[fullnames!="NA NA"]
+#     Authors[i] <- paste(fullnames, collapse = '/')
+#     Keywords[i] <- paste(Keywordlist,collapse = '/')
+#   }
+#   
+# }
