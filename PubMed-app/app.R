@@ -77,7 +77,7 @@ ui <- fluidPage(
     
     # Main panel --------------------
     mainPanel(
-      textOutput("OK"),
+      textOutput("print"),
       textOutput("show_tot_text"),
       hr(),
       conditionalPanel(condition="$('html').hasClass('shiny-busy')",
@@ -90,7 +90,7 @@ ui <- fluidPage(
 ############################## Server logic ##############################
 server <- function(input, output) {
   
-  output$OK <- renderPrint({ 
+  output$print <- renderPrint({ 
     
     tot_text <- 0
     Result <- 0
@@ -103,9 +103,6 @@ server <- function(input, output) {
       
       # input$negative_query <- stemDocument(input$negative_query) # IF STEMMING
       flag2 <- match(input$negative_query, rownames(irlba$v))
-      
-      # try(if(sum(is.na(flag)) > 0) stop("Query not found"))
-      # try(if(input$negative_query != '' & sum(is.na(flag)) > 0) stop("Query not found"))
       
       output$error <- renderPrint({ 
         try(if(sum(is.na(flag1)) > 0) cat(as.character(Strings$noPosQuery)))

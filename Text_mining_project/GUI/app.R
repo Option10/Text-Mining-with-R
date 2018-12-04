@@ -14,7 +14,8 @@ ap_top_terms <- readRDS("Data/LDAtop_terms")
 
 ## CSS
 mycss <- "
-#error{color: #F5A52A;
+#error{
+  color: #F5A52A;
   font-size: 13px;
 }
 #loadmessage {
@@ -57,14 +58,23 @@ ui <- fluidPage(
     #side panel ---------------------
     sidebarPanel(width = 3,
       textInput("positive_query","Search:",value = "breast"),
-      textInput("negative_query","negative query:",value = ""),
-      helpText("It is possible to add a negative querry in order to avoid certain topics"),
-      selectInput("method", 
+      hr(),
+      textInput("negative_query","Negative query:",value = ""),
+      helpText("It is possible to add a negative querry in order to avoid certain topics."),
+      br(),
+      div(style="display: inline-block;vertical-align:top; width: 250;",selectInput("method", 
                   label = "Select your search method:",
                   choices = c("LSA", "LDA", "Pubmed query"),
-                  selected = "LSA"),
-      helpText("LSA: or latent semantic analysis is a method that bla bla"),
-      helpText("LDA: or latent dirichlet allocation is a bla bla bla"),
+                  selected = "LSA")),
+      div(style="display: inline-block;vertical-align:top; width: 50px;",HTML("<br>")),
+      div(style="display: inline-block;vertical-align:top; width: 150;",selectInput("max_Results", 
+                  label = "Displayed results:",
+                  choices = c("10", "25", "50"),
+                  selected = "10")),
+      helpText("LSA: latent semantic analysis"),
+      helpText("LDA: latent dirichlet allocation"),
+      br(),
+      helpText(em("for more information visit www.github-lien.com"),align = "center"),
       hr(),
       textOutput("error") # marche que sur LDa pour l'instant
     ),
@@ -72,8 +82,8 @@ ui <- fluidPage(
     
     # Main panel --------------------
     mainPanel(
-      textOutput("OK"),
-      textOutput("show_tot_text"),
+      textOutput("environment"),
+      textOutput("show_Results_num"),
       hr(),
       conditionalPanel(condition="$('html').hasClass('shiny-busy')",
                        tags$div("Loading...",id="loadmessage")),
@@ -85,13 +95,12 @@ ui <- fluidPage(
 ############################## Server logic ##############################
 server <- function(input, output) {
   
-  output$OK <- renderPrint({ 
-    
-    tot_text <- 0
+  output$environment <- renderPrint({ 
+  
     Result <- 0
+    
 #################  LSA
     if (input$method == "LSA") {
-      
       query_system <- dget("Source/LSA_query_system.R")
       
       if (sum(which(rownames(irlba$v) == "hepatic")) > 0){
@@ -101,11 +110,11 @@ server <- function(input, output) {
       Result <- query_system(irlba,input$positive_query,input$negative_query,df$Abstract,stemming)
       # cat(input$positive_query,input$negative_query)
       DT = data.table(
-        Title = df$Title[Result[1:10]],
-        abstract = df$Abstract[Result[1:10]],
-        id = df$ID[Result[1:10]],
-        date = df$Date[Result[1:10]],
-        author = df$Author[Result[1:10]])
+        Title = df$Title[Result[1:input$max_Results]],
+        Abstract = df$Abstract[Result[1:input$max_Results]],
+        ID = df$ID[Result[1:input$max_Results]],
+        Date = df$Date[1:input$max_Results],
+        Authors = df$Author[Result[1:input$max_Results]])
 
     } # end if LSA
     
@@ -118,11 +127,11 @@ server <- function(input, output) {
       Result <- query_system(input$positive_query,input$negative_query,ap_top_terms,ap_documents,df$Abstract)
 
       DT = data.table(
-        Title = df$Title[Result[1:10]],
-        abstract = df$Abstract[Result[1:10]],
-        id = df$ID[Result[1:10]],
-        date = df$Date[Result[1:10]],
-        author = df$Author[Result[1:10]])
+        Title = df$Title[Result[1:input$max_Results]],
+        Abstract = df$Abstract[Result[1:input$max_Results]],
+        ID = df$ID[Result[1:input$max_Results]],
+        Date = df$Date[1:input$max_Results],
+        Author = df$Author[Result[1:input$max_Results]])
       
     } # end if LDA
     
@@ -137,17 +146,17 @@ server <- function(input, output) {
       df <- query_system(input$positive_query,abstractSize)
       
       DT = data.table(
-        Title = df$Title[1:10],
-        abstract = df$Abstract[1:10],
-        id = df$ID[1:10],
-        date = df$Date[1:10],
-        author = df$Author[1:10])
+        Title = df$Title[1:input$max_Results],
+        Abstract = df$Abstract[1:input$max_Results],
+        ID = df$ID[1:input$max_Results],
+        Date = df$Date[1:input$max_Results],
+        Author = df$Author[1:input$max_Results])
       
     } # end Pubmed query
-    
+    # as.Date(df$Date[100:110], "%Y")
     
 ##### Print output: 
-    output$show_tot_text <- renderText({ paste("We found:",max(length(tot_text),length(Result)),"results.") })
+    output$show_Results_num <- renderText({ paste("We found:",length(Result),"results, showing", input$max_Results) })
     output$table <- renderTable(DT)
     
   }) # end Render OK

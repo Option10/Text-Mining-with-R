@@ -90,7 +90,7 @@ if (new_Tokens | new_LSA | file.exists("Data/irlba") == FALSE){
     tf.idf <- function(tf, idf) {
       tf * idf
     }
-    cat("tf-idf \n")
+    cat("Computing: tf-idf \n")
     # First step, normalize all documents via TF.
     tokens.tf <- term.frequency(tokensDF)
     
@@ -104,7 +104,7 @@ if (new_Tokens | new_LSA | file.exists("Data/irlba") == FALSE){
     #-----------------------------------------------------------------------
     
     # for our latent semantic analysis (LSA).
-    cat("SVD \n")
+    cat("Computing: SVD \n")
     irlba <- irlba(tokens.tfidf, nv = nv, maxit = 1000)
     
     # line names
