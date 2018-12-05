@@ -14,7 +14,7 @@ Extract_Data <- function(query,abstractSize){
   # Option 2: 52349 documents via importation du fichier xml.
   #----------
   if (query == ''){
-     papers <- xmlParse(file = "Data/database.xml")
+     papers <- xmlParse(file = "/home/francois/Documents/Projet_Text_mining/pubmed18n0924.xml")
   }
   ## Information Extraction from dataset ("papers")
   #------------------------------------------------
@@ -67,7 +67,7 @@ Extract_Data <- function(query,abstractSize){
   # create dataframe
   df <- data.frame(ID, Abstract, Title, Date, Authors, Keywords)
   rm(ID, Abstract, Title, Date, Authors, ForeName, LastName,fullnames,Keywords, Keywordlist)
-  rm(xmltop, Article_Num, Book_count, Medline_count, i, k)
+  rm(xmltop, Article_Num, i, k)
   
   # clean dataframe
   df <- df[complete.cases(df[ , 2]),]
