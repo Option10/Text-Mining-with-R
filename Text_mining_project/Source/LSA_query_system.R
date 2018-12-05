@@ -12,7 +12,7 @@ query_system <- function(irlba,posQueryString,negQueryString,Abstract,stemming){
       if (is.na(match(posQuery_String[i],rownames(irlba$v)))){
         posQuery_String[i] <- 1
         # cat("The word",posQuery_Check[i],"isn't in the abstracts \n")
-        err <- c("The word \"",posQuery_Check[i],"\" wasn't found in any abstracts \n")
+        err <- c("We couldn't find the word \"",posQuery_Check[i],"\" in any abstract \n")
       }
     }
     posQuery_String <- posQuery_String [! posQuery_String %in% 1]
@@ -25,7 +25,7 @@ query_system <- function(irlba,posQueryString,negQueryString,Abstract,stemming){
         if (is.na(match(negQuery_String[i],rownames(irlba$v)))){
           negQuery_String[i] <- 1
           # cat("The word",negQuery_Check[i],"isn't in the abstracts \n")
-          err <-c("The word \"",negQuery_Check[i],"\" wasn't found in any abstracts \n")
+          err <-c("We couldn't find the word \"",negQuery_Check[i],"\" in any abstracts \n")
         }
       }
     }

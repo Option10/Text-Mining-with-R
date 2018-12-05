@@ -1,4 +1,4 @@
-setwd("~/Text-Mining-with-R/Text_mining_project")
+setwd("/home/francois/Documents/Projet_Text_mining/Text-Mining-with-R/Text_mining_project")
 
 loadPackage <- dget("Source/loadPackage.R")
 loadPackage("shiny","topicmodels","dplyr","data.table","easyPubMed","XML","quanteda","tm","foreach","doParallel")

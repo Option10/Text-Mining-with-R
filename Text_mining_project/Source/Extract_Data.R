@@ -76,6 +76,9 @@ Extract_Data <- function(query,abstractSize){
   return(df)  
 }
 
+
+# the chunk below is necessary if the data extraction is based on a PubMed query output.
+#
 # if(startsWith(xmlSApply(xmltop[[i]], xmlName)[1],"BookDocument")){
 #   Book_count=Book_count+1
 #   ID[i] <- xmlValue(xmltop[[i]][["BookDocument"]][["PMID"]])
