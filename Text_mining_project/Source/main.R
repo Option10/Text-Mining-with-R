@@ -1,4 +1,4 @@
-setwd("/home/francois/Documents/Projet_Text_mining/Text-Mining-with-R/Text_mining_project")
+setwd("~/Text-Mining-with-R/Text_mining_project")
 
 
 ## Extraction or load
@@ -21,11 +21,13 @@ k <- 20L                    # hyper parameter for LDA
 
 LSAquery <- TRUE
 LDAquery <- FALSE            # to activate queries
+
 interactiveQueries <- FALSE # to activate interactive queries
 
 ## ---- QUERIES --------- ##
 # give a positive & negative query as a vector of strings ('query','query',...)
-posQuery_String <- ('canclklker')
+
+posQuery_String <- ('breast')
 negQuery_String <- ('') # '' for no negative query 
 
 if (interactive() & interactiveQueries){
@@ -33,10 +35,6 @@ if (interactive() & interactiveQueries){
   posQuery_String <- readline("Give a positive query:") 
   negQuery_String <- readline("Give a negative query:")
 }
-########### Package loading function ##############
-#-------------------------------------------------#
-
-loadPackage <- dget("Source/loadPackage.R") # use loadPackage instead of library
 
 ############# Data extraction ####################
 #------------------------------------------------#
@@ -149,5 +147,9 @@ if (LSAquery){
 }
 if (LDAquery){
   query_system <- dget("Source/LDA_query_system.R")
-  query_system(posQuery_String,negQuery_String,LDAtop_terms,LDAdoc,Abstract) 
+  Result <- query_system(posQuery_String,negQuery_String,LDAtop_terms,LDAdoc,Abstract) 
+  cat("Positive queries:",posQuery_String,"\n","Negative queries:",negQuery_String,"\n")
+  for (i in (1:10)) {
+    cat("Result",i,"\n","Abstract",Result[i],"\n",Abstract[Result[i]],"\n")
+  }
 }

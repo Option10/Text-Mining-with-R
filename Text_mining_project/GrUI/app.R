@@ -1,7 +1,15 @@
 setwd("~/Text-Mining-with-R/Text_mining_project")
 
-loadPackage <- dget("Source/loadPackage.R")
-loadPackage("shiny","topicmodels","dplyr","data.table","easyPubMed","XML","quanteda","tm","foreach","doParallel")
+library(shiny)
+library(topicmodels)
+library(dplyr)
+library(data.table)
+library(easyPubMed)
+library(XML)
+library(quanteda)
+library(tm)
+library(foreach)
+library(doParallel)
 
 
 df <- readRDS("Data/Dataframe") # row data
@@ -14,14 +22,9 @@ ap_top_terms <- readRDS("Data/LDAtop_terms")
 
 ## CSS
 mycss <- "
-#pubmed_img{
-   position: relative;
-   top: -54px;
-   left: 115px;
-}
 #error{
   color: #F5A52A;
-  font-size: 18px;
+  font-size: 13px;
 }
 #loadmessage {
    position: relative;
@@ -39,9 +42,14 @@ mycss <- "
    background-color: #F5F5F5;
    z-index: 105;
 }
+#pubmed_img{
+   position: relative;
+   top: -54px;
+   left: 115px;
+}
 "
 
-Strings <- data.frame(  "noPosQuery" = "Your positive querry isn't significant in any of our topics, try an other research"
+Strings <- data.frame("noPosQuery" = "Your positive querry isn't significant in any of our topics, try an other research"
                       , "noNegQuery" = "Sorry, we will not take into account the negative request"
                       , "insignificantNegQuery" = "Your negative querry isn't significant in any of our topics, try an other research or continue")
 
@@ -57,7 +65,7 @@ ui <- fluidPage(
     
     #side panel ---------------------
     sidebarPanel(width = 3,
-      textInput("positive_query","Search:",value = "protein"),
+      textInput("positive_query","Search:",value = "breast"),
       hr(),
       textInput("negative_query","Negative query:",value = ""),
       helpText("It is possible to add a negative querry in order to avoid certain topics."),
@@ -65,7 +73,7 @@ ui <- fluidPage(
       div(style="display: inline-block;vertical-align:top; width: 250;",selectInput("method", 
                   label = "Select your search method:",
                   choices = c("LSA", "LDA", "Pubmed query"),
-                  selected = "LDA")),
+                  selected = "LSA")),
       div(style="display: inline-block;vertical-align:top; width: 50px;",HTML("<br>")),
       div(style="display: inline-block;vertical-align:top; width: 150;",selectInput("max_Results", 
                   label = "Displayed results:",
@@ -107,20 +115,14 @@ server <- function(input, output) {
         stemming <- FALSE
       }else{stemming <- TRUE}
       
-      query_output <- query_system(irlba,input$positive_query,input$negative_query,df$Abstract,stemming)
-      Result <- query_output$res
-      error <- query_output$err
-      output$error <- renderText({error})
-      
+      Result <- query_system(irlba,input$positive_query,input$negative_query,df$Abstract,stemming)
       # cat(input$positive_query,input$negative_query)
-      
-      
       DT = data.table(
         Title = df$Title[Result[1:input$max_Results]],
         Abstract = df$Abstract[Result[1:input$max_Results]],
         ID = df$ID[Result[1:input$max_Results]],
-        Date = df$Date[Result[1:input$max_Results]],
-        Authors = gsub("/", ", ", df$Authors[Result[1:input$max_Results]]))
+        Date = df$Date[1:input$max_Results],
+        Authors = df$Author[Result[1:input$max_Results]])
 
     } # end if LSA
     
@@ -130,17 +132,14 @@ server <- function(input, output) {
       
       query_system <- dget("Source/LDA_query_system.R")
       
-      query_output <- query_system(input$positive_query,input$negative_query,ap_top_terms,ap_documents,df$Abstract,Strings)
-      Result <- query_output$res
-      error <- query_output$err
-      output$error <- renderText({error})
-      
+      Result <- query_system(input$positive_query,input$negative_query,ap_top_terms,ap_documents,df$Abstract)
+
       DT = data.table(
         Title = df$Title[Result[1:input$max_Results]],
         Abstract = df$Abstract[Result[1:input$max_Results]],
         ID = df$ID[Result[1:input$max_Results]],
-        Date = df$Date[Result[1:input$max_Results]],
-        Authors = gsub("/", ", ", df$Authors[Result[1:input$max_Results]]))
+        Date = df$Date[1:input$max_Results],
+        Author = df$Author[Result[1:input$max_Results]])
       
     } # end if LDA
     
@@ -159,7 +158,7 @@ server <- function(input, output) {
         Abstract = df$Abstract[1:input$max_Results],
         ID = df$ID[1:input$max_Results],
         Date = df$Date[1:input$max_Results],
-        Authors = gsub("/", ", ",df$Author[1:input$max_Results]))
+        Author = df$Author[1:input$max_Results])
       
     } # end Pubmed query
     # as.Date(df$Date[100:110], "%Y")
