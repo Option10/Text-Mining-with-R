@@ -14,6 +14,11 @@ ap_top_terms <- readRDS("Data/LDAtop_terms")
 
 ## CSS
 mycss <- "
+#pubmed_img{
+   position: relative;
+   top: -54px;
+   left: 115px;
+}
 #error{
   color: #F5A52A;
   font-size: 13px;
@@ -34,11 +39,6 @@ mycss <- "
    background-color: #F5F5F5;
    z-index: 105;
 }
-#pubmed_img{
-   position: relative;
-   top: -54px;
-   left: 115px;
-}
 "
 
 Strings <- data.frame("noPosQuery" = "Your positive querry isn't significant in any of our topics, try an other research"
@@ -57,7 +57,7 @@ ui <- fluidPage(
     
     #side panel ---------------------
     sidebarPanel(width = 3,
-      textInput("positive_query","Search:",value = "breast"),
+      textInput("positive_query","Search:",value = "protein"),
       hr(),
       textInput("negative_query","Negative query:",value = ""),
       helpText("It is possible to add a negative querry in order to avoid certain topics."),
@@ -113,8 +113,8 @@ server <- function(input, output) {
         Title = df$Title[Result[1:input$max_Results]],
         Abstract = df$Abstract[Result[1:input$max_Results]],
         ID = df$ID[Result[1:input$max_Results]],
-        Date = df$Date[1:input$max_Results],
-        Authors = df$Author[Result[1:input$max_Results]])
+        Date = df$Date[Result[1:input$max_Results]],
+        Authors = gsub("/", ", ", df$Authors[Result[1:input$max_Results]]))
 
     } # end if LSA
     
@@ -130,8 +130,8 @@ server <- function(input, output) {
         Title = df$Title[Result[1:input$max_Results]],
         Abstract = df$Abstract[Result[1:input$max_Results]],
         ID = df$ID[Result[1:input$max_Results]],
-        Date = df$Date[1:input$max_Results],
-        Author = df$Author[Result[1:input$max_Results]])
+        Date = df$Date[Result[1:input$max_Results]],
+        Authors = gsub("/", ", ", df$Authors[Result[1:input$max_Results]]))
       
     } # end if LDA
     
@@ -150,7 +150,7 @@ server <- function(input, output) {
         Abstract = df$Abstract[1:input$max_Results],
         ID = df$ID[1:input$max_Results],
         Date = df$Date[1:input$max_Results],
-        Author = df$Author[1:input$max_Results])
+        Authors = gsub("/", ", ",df$Author[1:input$max_Results]))
       
     } # end Pubmed query
     # as.Date(df$Date[100:110], "%Y")
