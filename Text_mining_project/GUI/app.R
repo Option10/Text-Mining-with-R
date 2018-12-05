@@ -1,4 +1,4 @@
-setwd("~/Text-Mining-with-R/Text_mining_project")
+setwd("/home/francois/Documents/Projet_Text_mining/Text-Mining-with-R/Text_mining_project")
 
 loadPackage <- dget("Source/loadPackage.R")
 loadPackage("shiny","topicmodels","dplyr","data.table","easyPubMed","XML","quanteda","tm","foreach","doParallel")
@@ -21,7 +21,7 @@ mycss <- "
 }
 #error{
   color: #F5A52A;
-  font-size: 13px;
+  font-size: 18px;
 }
 #loadmessage {
    position: relative;
@@ -41,7 +41,7 @@ mycss <- "
 }
 "
 
-Strings <- data.frame("noPosQuery" = "Your positive querry isn't significant in any of our topics, try an other research"
+Strings <- data.frame(  "noPosQuery" = "Your positive querry isn't significant in any of our topics, try an other research"
                       , "noNegQuery" = "Sorry, we will not take into account the negative request"
                       , "insignificantNegQuery" = "Your negative querry isn't significant in any of our topics, try an other research or continue")
 
@@ -65,7 +65,7 @@ ui <- fluidPage(
       div(style="display: inline-block;vertical-align:top; width: 250;",selectInput("method", 
                   label = "Select your search method:",
                   choices = c("LSA", "LDA", "Pubmed query"),
-                  selected = "LSA")),
+                  selected = "LDA")),
       div(style="display: inline-block;vertical-align:top; width: 50px;",HTML("<br>")),
       div(style="display: inline-block;vertical-align:top; width: 150;",selectInput("max_Results", 
                   label = "Displayed results:",
@@ -107,8 +107,14 @@ server <- function(input, output) {
         stemming <- FALSE
       }else{stemming <- TRUE}
       
-      Result <- query_system(irlba,input$positive_query,input$negative_query,df$Abstract,stemming)
+      query_output <- query_system(irlba,input$positive_query,input$negative_query,df$Abstract,stemming)
+      Result <- query_output$res
+      error <- query_output$err
+      output$error <- renderText({error})
+      
       # cat(input$positive_query,input$negative_query)
+      
+      
       DT = data.table(
         Title = df$Title[Result[1:input$max_Results]],
         Abstract = df$Abstract[Result[1:input$max_Results]],
@@ -124,8 +130,11 @@ server <- function(input, output) {
       
       query_system <- dget("Source/LDA_query_system.R")
       
-      Result <- query_system(input$positive_query,input$negative_query,ap_top_terms,ap_documents,df$Abstract)
-
+      query_output <- query_system(input$positive_query,input$negative_query,ap_top_terms,ap_documents,df$Abstract,Strings)
+      Result <- query_output$res
+      error <- query_output$err
+      output$error <- renderText({error})
+      
       DT = data.table(
         Title = df$Title[Result[1:input$max_Results]],
         Abstract = df$Abstract[Result[1:input$max_Results]],

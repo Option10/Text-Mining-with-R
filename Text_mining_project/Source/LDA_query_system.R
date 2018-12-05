@@ -1,5 +1,5 @@
-function(posQuery_String,negQuery_String,LDAtop_terms,LDAdoc,Abstract){
-  
+function(posQuery_String,negQuery_String,LDAtop_terms,LDAdoc,Abstract,Strings){
+  err <-""
   beta1 <-0
   
   ap_top_terms <- LDAtop_terms
@@ -18,7 +18,12 @@ function(posQuery_String,negQuery_String,LDAtop_terms,LDAdoc,Abstract){
     topic_int_tot <- topic_int_pos
   }
   
-  # error <- renderPrint({ 
+  # errors
+  if(length(topic_int_pos)<1) err <- c(as.character(Strings$noPosQuery))
+  if(length(topic_int_neg)<1 & negQuery_String!="") err <- c(as.character(Strings$noNegQuery))
+  if(length(topic_int_tot)<1 & negQuery_String!="") err <- c(as.character(Strings$insignificantNegQuery))
+  
+  # err <- renderPrint({ 
   #   tryCatch(if(length(topic_int_pos)<1) cat(as.character(Strings$noPosQuery)))
   #   tryCatch(if(length(topic_int_neg)<1 & negQuery_String!="") cat(as.character(Strings$noNegQuery)))
   #   tryCatch(if(length(topic_int_tot)<1 & negQuery_String!="") cat(as.character(Strings$insignificantNegQuery)))
@@ -52,6 +57,7 @@ function(posQuery_String,negQuery_String,LDAtop_terms,LDAdoc,Abstract){
   # 
   # tot_text <- setdiff(top_text_number[right_text],top_text_number[wrong_text])
   
-  return(Result)
+  res <- list(res = Result, err=err)
+  return(res)
   
 }

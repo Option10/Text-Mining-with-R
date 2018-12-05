@@ -1,4 +1,4 @@
-setwd("~/Text-Mining-with-R/Text_mining_project")
+setwd("/home/francois/Documents/Projet_Text_mining/Text-Mining-with-R/Text_mining_project")
 
 
 ## Extraction or load
@@ -21,11 +21,11 @@ k <- 20L                    # hyper parameter for LDA
 
 LSAquery <- TRUE
 LDAquery <- FALSE            # to activate queries
-interactiveQueries <- TRUE # to activate interactive queries
+interactiveQueries <- FALSE # to activate interactive queries
 
 ## ---- QUERIES --------- ##
 # give a positive & negative query as a vector of strings ('query','query',...)
-posQuery_String <- ('cancer')
+posQuery_String <- ('canclklker')
 negQuery_String <- ('') # '' for no negative query 
 
 if (interactive() & interactiveQueries){
