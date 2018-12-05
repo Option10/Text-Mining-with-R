@@ -32,9 +32,9 @@ function(posQuery_String,negQuery_String,LDAtop_terms,LDAdoc,Abstract,Strings){
   }else{topic_ind <- topic_ind_pos}
 
   # errors
-  # if(length(topic_int_pos)<1) err <- c(as.character(Strings$noPosQuery))
-  # if(length(topic_int_neg)<1 & negQuery_String!="") err <- c(as.character(Strings$noNegQuery))
-  # if(length(topic_int_tot)<1 & negQuery_String!="") err <- c(as.character(Strings$insignificantNegQuery))
+  # if(length(topic_ind_pos)<1) err <- c(as.character(Strings$noPosQuery))
+  # if(length(topic_ind_neg)<1 & negQuery_String!="") err <- c(as.character(Strings$noNegQuery))
+  # if(length(topic_ind_tot)<1 & negQuery_String!="") err <- c(as.character(Strings$insignificantNegQuery))
   
   ind3 <- which(ap_documents$topic %in% topic_ind) # concerned by selected topics abstracts
   
@@ -56,8 +56,7 @@ function(posQuery_String,negQuery_String,LDAtop_terms,LDAdoc,Abstract,Strings){
   
   # Result <- as.numeric(gsub(pattern = 'text',replacement = '',x = result$document))
   
-  Abstract <- as.character(df$Abstract)
-
+ 
   top_text <- select(head(result,2500),"document")
   top_text
   top_text_number <- 0

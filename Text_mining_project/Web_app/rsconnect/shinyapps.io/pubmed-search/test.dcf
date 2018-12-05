@@ -1,0 +1,12 @@
+name: test
+title: test
+username:
+account: pubmed-search
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 605169
+bundleId: 1743441
+url: https://pubmed-search.shinyapps.io/test/
+when: 1544036670.77958
+asMultiple: FALSE
+asStatic: FALSE
