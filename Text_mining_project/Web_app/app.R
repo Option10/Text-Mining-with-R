@@ -138,7 +138,11 @@ server <- function(input, output) {
       
       query_system <- dget("Source/LDA_query_system.R")
       
-      query_output <- query_system(input$positive_query,input$negative_query,ap_top_terms,ap_documents,df$Abstract,Strings)
+      if (sum(which(ap_top_terms$term == "hepatic")) > 0){
+        stemming <- FALSE
+      }else{stemming <- TRUE}
+      
+      query_output <- query_system(input$positive_query,input$negative_query,ap_top_terms,ap_documents,df$Abstract,Strings,stemming)
       Result <- query_output$res
       error <- query_output$err
       output$error <- renderText({error})

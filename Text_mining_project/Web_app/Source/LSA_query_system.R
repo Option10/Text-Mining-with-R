@@ -6,8 +6,10 @@ query_system <- function(irlba,posQueryString,negQueryString,Abstract,stemming){
   posQuery_String <- colnames(tokenization(posQueryString,stemming,flag))
   posQuery_Check <- colnames(tokenization(posQueryString,FALSE,flag))
   
-  if (posQueryString == "") {Result <- NULL} # if no positive query is given, no results are chosen.
-  else{
+  if (posQueryString == "") {
+    Result <- NULL # if no positive query is given, no results are chosen.
+    err <- c("Please enter a positive query")
+  } else{
     for (i in (1:length(posQuery_String))){ # for every words in the query
       if (is.na(match(posQuery_String[i],rownames(irlba$v)))){
         posQuery_String[i] <- 1
@@ -31,33 +33,30 @@ query_system <- function(irlba,posQueryString,negQueryString,Abstract,stemming){
     }
     negQuery_String <- negQuery_String [! negQuery_String %in% 1]
     
-    # Compute the queries' coordinates in SVD matrix
-    posIndex <- vector(length = length(posQuery_String))
-    for (i in (1:length(posQuery_String))) {
-      posIndex[i] <- match(posQuery_String[i], rownames(irlba$v))
-    }
-    eig_posQuery <- irlba$v[posIndex,]
-    
-    if (is.null(negQuery_String) == FALSE){
-      negIndex <- vector(length = length(negQuery_String))
-      for (i in (1:length(negQuery_String))) {
-        negIndex[i] <- match(negQuery_String[i], rownames(irlba$v))
+    if (length(posQuery_String) > 0) {
+      
+      # Build the query vector
+      # return words vector with 0, 1 (pos query), -1 (neg query) 
+      indQuery <- 0                                               
+      indPosQuery <- rep(0,length(rownames(irlba$v)))          
+      for (i in 1:length(posQuery_String)){
+        indQuery <- rownames(irlba$v) == posQuery_String[i]
+        indPosQuery <- indPosQuery | indQuery
       }
-      eig_negQuery <- irlba$v[negIndex,]
-    }
-    
-    if (!is.na(eig_posQuery[1])) {
       
-      # combine the queries (coordinates mean)
-      if (is.null(negQuery_String) == FALSE){
-        eig_Query <- colMeans(rbind(eig_posQuery,-eig_negQuery)) # general case
-      }else if (length(posQuery_String) == 1){ eig_Query <- eig_posQuery # if only one positive query
-      }else {eig_Query <- colMeans(eig_posQuery)} # if no negative query
+      indNegQuery <- rep(0,length(rownames(irlba$v)))
+      if (length(negQuery_String) != 0)
+        for (i in 1:length(negQuery_String)){
+          indQuery <- rownames(irlba$v) == negQuery_String[i]
+          indNegQuery <- indNegQuery | indQuery
+        }
+      indNegQuery = indNegQuery * -1L
       
-      # # Test with singular values
-      # sigma <- diag(irlba$d)
-      # eig_Query <- irlba$d %o% irlba$u  
-      # test <- eig_Query * posIndex
+      Query <- as.matrix(indPosQuery + indNegQuery)
+      
+      sigma <- diag(1/irlba$d)
+      
+      eigQuery <- sigma %*% aperm(irlba$v) %*% Query  #compute the query vector
       
       # This function computes the euclidean distance between the queries and each document
       euc.dist <- function(docs,query){ 
@@ -75,7 +74,7 @@ query_system <- function(irlba,posQueryString,negQueryString,Abstract,stemming){
       }
       
       # Calculate distance, order and name the rows
-      distMatrix <- euc.dist(irlba$u, eig_Query)
+      distMatrix <- euc.dist(irlba$u, eigQuery)
       
       names(distMatrix) <- rownames(irlba$u)
       distMatrix <- distMatrix[order(distMatrix),drop=FALSE]
