@@ -6,7 +6,7 @@ query_system <- function(irlba,posQueryString,negQueryString,Abstract,stemming){
   posQuery_String <- colnames(tokenization(posQueryString,stemming,flag))
   posQuery_Check <- colnames(tokenization(posQueryString,FALSE,flag))
   
-  if (posQueryString == "") {
+  if (length(posQuery_String) == 0) {
     Result <- NULL # if no positive query is given, no results are chosen.
     err <- c("Please enter a positive query")
   } else{
