@@ -7,7 +7,7 @@ Extract_Data <- function(query,abstractSize){
   # Option 1: 698 documents via une requete
   #----------
   if(query != ''){
-    cat("Extract from query :",query)
+    # cat("Extract from query :",query)
     Ids <- get_pubmed_ids(query)
     papers <- fetch_pubmed_data(Ids)
   }
@@ -35,16 +35,16 @@ Extract_Data <- function(query,abstractSize){
   j <- 0L
   
   # info extraction
-  ptm <- proc.time()
-  cat("Please wait \n")
-  cat("|-----------------------------| \n")
+  # ptm <- proc.time()
+  # cat("Please wait \n")                        # Loading progress bar not working on the app
+  # cat("|-----------------------------| \n")
   for (i in 1:Article_Num){
     #if querry via PubMedQuerry, add code chunck at bottom of page.
     # and add if(startsWith(xmlSApply(xmltop[[i]], xmlName)[1],"MedlineCitation")){...}
-    if (i/(Article_Num/30) >= j){
-      cat("|")
-      j = j + 1L
-    }
+    # if (i/(Article_Num/30) >= j){             # Loading progress bar not working on the app
+    #   cat("|")
+    #   j = j + 1L
+    # }
     ID[i] <- xmlValue(xmltop[[i]][["MedlineCitation"]][["PMID"]])
     Abstract[i] <- xmlValue(xmltop[[i]][["MedlineCitation"]][["Article"]][["Abstract"]])
     Title[i] <- xmlValue(xmltop[[i]][["MedlineCitation"]][["Article"]][["ArticleTitle"]])
@@ -60,8 +60,9 @@ Extract_Data <- function(query,abstractSize){
     Keywords[i] <- paste(Keywordlist,collapse = '/')
     
   }
-  cat("\n")
-  print(proc.time() - ptm)
+  # cat("\n")                            # Loading progress bar not working on the app
+  # print(proc.time() - ptm)
+  
   rm(papers)
   
   # create dataframe

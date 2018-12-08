@@ -1,4 +1,7 @@
 # setwd("~/Text-Mining-with-R/Text_mining_project")
+# options(shiny.trace=TRUE)               run those 2 options in console to have a feed back (for debugging)
+# options(shiny.fullstacktrace=TRUE)
+
 
 library(shiny)
 library(topicmodels)
@@ -164,14 +167,28 @@ server <- function(input, output) {
       
       abstractSize <- c(100,3000) # min and max caracter in abstracts analysed
       
-      df <- query_system(input$positive_query,abstractSize)
-      
-      DT = data.table(
-        Title = df$Title[1:input$max_Results],
-        Abstract = df$Abstract[1:input$max_Results],
-        ID = df$ID[1:input$max_Results],
-        Date = df$Date[1:input$max_Results],
-        Authors = gsub("/", ", ",df$Author[1:input$max_Results]))
+      if (input$positive_query == ""){
+        Result <- NULL
+        DT = data.table(
+          Title = df$Title[Result[1:input$max_Results]],
+          Abstract = df$Abstract[Result[1:input$max_Results]],
+          ID = df$ID[Result[1:input$max_Results]],
+          Date = df$Date[Result[1:input$max_Results]],
+          Authors = gsub("/", ", ", df$Authors[Result[1:input$max_Results]]))
+        error <- "Please enter one positive query"
+        
+      }else{
+        df <- query_system(input$positive_query,abstractSize)
+        
+        DT = data.table(
+          Title = df$Title[1:input$max_Results],
+          Abstract = df$Abstract[1:input$max_Results],
+          ID = df$ID[1:input$max_Results],
+          Date = df$Date[1:input$max_Results],
+          Authors = gsub("/", ", ",df$Author[1:input$max_Results]))
+        Result <- vector(length = length(df$ID)) # to get the number of results
+        
+      }
       
     } # end Pubmed query
     # as.Date(df$Date[100:110], "%Y")

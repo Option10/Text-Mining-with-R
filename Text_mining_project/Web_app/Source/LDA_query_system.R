@@ -33,6 +33,7 @@ function(posQueryString,negQueryString,LDAtop_terms,LDAdoc,Abstract,Strings,stem
     }
   }
   negQuery_String <- negQuery_String [! negQuery_String %in% 1]
+  if (length(negQuery_String) == 0) negQuery_String <- NULL
   
   if (length(posQuery_String) == 0) {
     tot_text <- NULL   # if no positive query is given, no results are chosen.
