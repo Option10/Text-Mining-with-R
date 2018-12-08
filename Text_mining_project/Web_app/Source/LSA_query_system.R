@@ -81,6 +81,23 @@ query_system <- function(irlba,posQueryString,negQueryString,Abstract,stemming){
       
       Result <- names(distMatrix)
       Result <- as.numeric(gsub(pattern = 'text',replacement = '',x = Result))
+      
+      right_text <- NA
+      wrong_text <- NA
+      buffer <- NA
+      tot_text <- NA
+      Result <- Result[1:2500]
+      
+      for (k in Result){
+        right_text[match(k,Result)] <- grepl(posQuery_String[1], Abstract[k])
+        if (is.null(negQuery_String)){
+          wrong_text[match(k,Result)]<- FALSE
+        }else{
+          wrong_text[match(k,Result)] <- grepl(negQuery_String[1], Abstract[k])
+        }
+      }
+      
+      Result <- setdiff(Result[right_text],Result[wrong_text])
     }else{Result <- NULL}
     
   }
