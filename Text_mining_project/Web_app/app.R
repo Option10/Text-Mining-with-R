@@ -1,16 +1,22 @@
-setwd("/home/francois/Documents/Projet_Text_mining/Text-Mining-with-R/Text_mining_project/Web_app/")
+# setwd("/home/francois/Documents/Projet_Text_mining/Text-Mining-with-R/Text_mining_project/Web_app/")
 
-loadPackage <- dget("Source/loadPackage.R")
-loadPackage("shiny","topicmodels","dplyr","data.table","easyPubMed","XML","quanteda","tm","foreach","doParallel","DT")
-
+library(shiny)
+library(topicmodels)
+library(dplyr)
+library(data.table)
+library(easyPubMed)
+library(XML)
+library(quanteda)
+library(tm)
+library(foreach)
+library(doParallel)
+library(DT)
 
 df <- readRDS("Data/Dataframe") # row data
 irlba <- readRDS("Data/irlba") # SVD matrix (for LSA)
 
 ap_documents <- readRDS("Data/LDAdoc") # for LDA
 ap_top_terms <- readRDS("Data/LDAtop_terms")
-# ap_lda <- readRDS("Data/LDAtop_terms")
-# ap_topics <- readRDS("Data/ap_topics.rds")
 
 
 Strings <- data.frame(  "noPosQuery" = "Your positive querry isn't significant in any of our topics, try an other research"
@@ -89,13 +95,21 @@ server <- function(input, output) {
 ##### output Table: 
     
     # create dataframe
-    DT = data.table(
-      Title = df$Title[Result],
-      Abstract = df$Abstract[Result],
-      ID = paste("<a href='https://www.ncbi.nlm.nih.gov/pubmed/?term=",df$ID[Result],"'>",df$ID[Result],"</a>",sep = ""),
-      Date = as.Date(as.character(df$Date[Result]),format = "%Y"),
-      Authors = gsub("/", ", ", df$Authors[Result]))
-    
+    if (!is.null(Result)){
+      DT = data.table(
+        Title = df$Title[Result],
+        Abstract = df$Abstract[Result],
+        ID = paste("<a href='https://www.ncbi.nlm.nih.gov/pubmed/?term=",df$ID[Result],"'>",df$ID[Result],"</a>",sep = ""),
+        Date = as.Date(as.character(df$Date[Result]),format = "%Y"),
+        Authors = gsub("/", ", ", df$Authors[Result]))
+    }else{
+      DT = data.table(
+        Title = NA,
+        Abstract = NA,
+        ID = NA,
+        Date = NA,
+        Authors = NA)
+    }
     # create dataframe output with DT::datatable and renderDT 
     DT<- datatable(cbind(' ' = '&oplus;', DT), escape = FALSE,
                    options = list(
@@ -107,23 +121,22 @@ server <- function(input, output) {
                        list(orderable = TRUE, className = 'details-control', targets = 0)),
                      searchHighlight = TRUE),
                    callback = JS("
-  table.column(1).nodes().to$().css({cursor: 'pointer'});
-  var format = function(d) {
-    return '<div style=\"background-color:#eee; padding: .5em;\"> Abstract: ' +
-            d[3] + '</div>' +
-           '<div style=\"background-color:#eee; padding: .5em;\"> ID: ' + d[4] + '</div>';
-  };
-  table.on('click', 'td.details-control', function() {
-    var td = $(this), row = table.row(td.closest('tr'));
-    if (row.child.isShown()) {
-      row.child.hide();
-      td.html('&oplus;');
-    } else {
-      row.child(format(row.data())).show();
-      td.html('&CircleMinus;');
-    }
-  });"))
-    
+                      table.column(1).nodes().to$().css({cursor: 'pointer'});
+                      var format = function(d) {
+                        return '<div style=\"background-color:#eee; padding: .5em;\"> Abstract: ' +
+                                d[3] + '</div>' +
+                               '<div style=\"background-color:#eee; padding: .5em;\"> ID: ' + d[4] + '</div>';
+                      };
+                      table.on('click', 'td.details-control', function() {
+                        var td = $(this), row = table.row(td.closest('tr'));
+                        if (row.child.isShown()) {
+                          row.child.hide();
+                          td.html('&oplus;');
+                        } else {
+                          row.child(format(row.data())).show();
+                          td.html('&CircleMinus;');
+                        }
+                      });"))
     # render output
     output$table <- renderDT(DT)
     
