@@ -1,18 +1,7 @@
-# setwd("~/Text-Mining-with-R/Text_mining_project")
-# options(shiny.trace=TRUE)               run those 2 options in console to have a feed back (for debugging)
-# options(shiny.fullstacktrace=TRUE)
+setwd("/home/francois/Documents/Projet_Text_mining/Text-Mining-with-R/Text_mining_project/Web_app/")
 
-
-library(shiny)
-library(topicmodels)
-library(dplyr)
-library(data.table)
-library(easyPubMed)
-library(XML)
-library(quanteda)
-library(tm)
-library(foreach)
-library(doParallel)
+loadPackage <- dget("Source/loadPackage.R")
+loadPackage("shiny","topicmodels","dplyr","data.table","easyPubMed","XML","quanteda","tm","foreach","doParallel","DT")
 
 
 df <- readRDS("Data/Dataframe") # row data
@@ -23,34 +12,6 @@ ap_top_terms <- readRDS("Data/LDAtop_terms")
 # ap_lda <- readRDS("Data/LDAtop_terms")
 # ap_topics <- readRDS("Data/ap_topics.rds")
 
-## CSS
-mycss <- "
-#pubmed_img{
-   position: relative;
-   top: -54px;
-   left: 115px;
-}
-#error{
-  color: #F5A52A;
-  font-size: 18px;
-}
-#loadmessage {
-   position: relative;
-   border-radius: 25px;
-   margin-left: auto; 
-   margin-right: auto;
-   top: 0px;
-   left: 0px;
-   width: 50%;
-   padding: 5px 0px 5px 0px;
-   text-align: center;
-   font-weight: bold;
-   font-size: 100%;
-   color: #000000;
-   background-color: #F5F5F5;
-   z-index: 105;
-}
-"
 
 Strings <- data.frame(  "noPosQuery" = "Your positive querry isn't significant in any of our topics, try an other research"
                       , "noNegQuery" = "Sorry, we will not take into account the negative request"
@@ -58,47 +19,35 @@ Strings <- data.frame(  "noPosQuery" = "Your positive querry isn't significant i
 
 
 ############################## User Interface ##############################
-ui <- fluidPage(
-  
-  titlePanel("Search"),
-  img(id="pubmed_img",src = "PubMed.png", height = 52, width = 150),
-  tags$head(tags$style(HTML(mycss))),
-  
+ui <- fluidPage(id = "fluidpage", theme = "stylesheet.css",
+  hr(id="header"),
+  div(style="display:inline-block; position: relative; left: 90px",titlePanel("Search")),
+  div(style="display:inline-block; position: relative; top: -8px; left: 95px",img(id="pubmed_img",src = "PubMed.png", height = 52, width = 150)),
   sidebarLayout(
     
     #side panel ---------------------
-    sidebarPanel(width = 3,
-      textInput("positive_query","Search:",value = "protein"),
-      hr(),
+    sidebarPanel(id = "sidebarpanel",width = 3,
+      textInput("positive_query","Positive query:",value = "protein"),
       textInput("negative_query","Negative query:",value = ""),
-      helpText("It is possible to add a negative querry in order to avoid certain topics."),
+      helpText("The negative query allows you to avoid certain topics."),
       br(),
-      div(style="display: inline-block;vertical-align:top; width: 250;",selectInput("method", 
+      selectInput("method", 
                   label = "Select your search method:",
-                  choices = c("LSA", "LDA", "Pubmed query"),
-                  selected = "LDA")),
-      div(style="display: inline-block;vertical-align:top; width: 50px;",HTML("<br>")),
-      div(style="display: inline-block;vertical-align:top; width: 150;",selectInput("max_Results", 
-                  label = "Displayed results:",
-                  choices = c("10", "25", "50"),
-                  selected = "10")),
-      helpText("LSA: latent semantic analysis"),
-      helpText("LDA: latent dirichlet allocation"),
-      br(),
-      helpText(em("for more information visit www.github-lien.com"),align = "center"),
+                  choices = c("Latent Semantic Analysis", "Latent Dirichlet Allocation"),
+                  selected = "Latent Semantic Analysis",
+                  width = 250),
       hr(),
+      helpText(em("for more information visit https://github.com/Option10/Text-Mining-with-R"),align = "center"),
       textOutput("error") # marche que sur LDa pour l'instant
     ),
     
     
     # Main panel --------------------
-    mainPanel(
+    mainPanel(id = "mainpage",
       textOutput("environment"),
-      textOutput("show_Results_num"),
-      hr(),
       conditionalPanel(condition="$('html').hasClass('shiny-busy')",
                        tags$div("Loading...",id="loadmessage")),
-      tableOutput("table")
+      DTOutput("table")
     )
   )
 )
@@ -109,9 +58,9 @@ server <- function(input, output) {
   output$environment <- renderPrint({ 
   
     Result <- 0
-    
+
 #################  LSA
-    if (input$method == "LSA") {
+    if (input$method == "Latent Semantic Analysis") {
       query_system <- dget("Source/LSA_query_system.R")
       
       if (sum(which(rownames(irlba$v) == "hepatic")) > 0){
@@ -123,81 +72,62 @@ server <- function(input, output) {
       error <- query_output$err
       output$error <- renderText({error})
       
-      # cat(input$positive_query,input$negative_query)
-      
-      
-      DT = data.table(
-        Title = df$Title[Result[1:input$max_Results]],
-        Abstract = df$Abstract[Result[1:input$max_Results]],
-        ID = df$ID[Result[1:input$max_Results]],
-        Date = df$Date[Result[1:input$max_Results]],
-        Authors = gsub("/", ", ", df$Authors[Result[1:input$max_Results]]))
-
     } # end if LSA
     
-    
 #################  LDA
-    if (input$method == "LDA") {
+    if (input$method == "Latent Dirichlet Allocation") {
       
       query_system <- dget("Source/LDA_query_system.R")
       
-      if (sum(which(ap_top_terms$term == "hepatic")) > 0){
-        stemming <- FALSE
-      }else{stemming <- TRUE}
-      
-      query_output <- query_system(input$positive_query,input$negative_query,ap_top_terms,ap_documents,df$Abstract,Strings,stemming)
+      query_output <- query_system(input$positive_query,input$negative_query,ap_top_terms,ap_documents,df$Abstract,Strings)
       Result <- query_output$res
       error <- query_output$err
       output$error <- renderText({error})
       
-      DT = data.table(
-        Title = df$Title[Result[1:input$max_Results]],
-        Abstract = df$Abstract[Result[1:input$max_Results]],
-        ID = df$ID[Result[1:input$max_Results]],
-        Date = df$Date[Result[1:input$max_Results]],
-        Authors = gsub("/", ", ", df$Authors[Result[1:input$max_Results]]))
-      
     } # end if LDA
     
+##### output Table: 
     
-#################  Pubmed query 
-    if (input$method == "Pubmed query") {
-      
-      query_system <- dget("Source/Extract_Data.R")
-      
-      abstractSize <- c(100,3000) # min and max caracter in abstracts analysed
-      
-      if (input$positive_query == ""){
-        Result <- NULL
-        DT = data.table(
-          Title = df$Title[Result[1:input$max_Results]],
-          Abstract = df$Abstract[Result[1:input$max_Results]],
-          ID = df$ID[Result[1:input$max_Results]],
-          Date = df$Date[Result[1:input$max_Results]],
-          Authors = gsub("/", ", ", df$Authors[Result[1:input$max_Results]]))
-        error <- "Please enter one positive query"
-        
-      }else{
-        df <- query_system(input$positive_query,abstractSize)
-        
-        DT = data.table(
-          Title = df$Title[1:input$max_Results],
-          Abstract = df$Abstract[1:input$max_Results],
-          ID = df$ID[1:input$max_Results],
-          Date = df$Date[1:input$max_Results],
-          Authors = gsub("/", ", ",df$Author[1:input$max_Results]))
-        Result <- vector(length = length(df$ID)) # to get the number of results
-        
-      }
-      
-    } # end Pubmed query
-    # as.Date(df$Date[100:110], "%Y")
+    # create dataframe
+    DT = data.table(
+      Title = df$Title[Result],
+      Abstract = df$Abstract[Result],
+      ID = paste("<a href='https://www.ncbi.nlm.nih.gov/pubmed/?term=",df$ID[Result],"'>",df$ID[Result],"</a>",sep = ""),
+      Date = as.Date(as.character(df$Date[Result]),format = "%Y"),
+      Authors = gsub("/", ", ", df$Authors[Result]))
     
-##### Print output: 
-    output$show_Results_num <- renderText({ paste("We found:",length(Result),"results, showing", input$max_Results) })
-    output$table <- renderTable(DT)
+    # create dataframe output with DT::datatable and renderDT 
+    DT<- datatable(cbind(' ' = '&oplus;', DT), escape = FALSE,
+                   options = list(
+                     pageLength = 25,
+                     columnDefs = list(
+                       list(visible = FALSE, targets = c(3,4)),
+                       list(width = '65px', targets = 5),
+                       list(orderable = FALSE, className = 'details-control', targets = 1),
+                       list(orderable = TRUE, className = 'details-control', targets = 0)),
+                     searchHighlight = TRUE),
+                   callback = JS("
+  table.column(1).nodes().to$().css({cursor: 'pointer'});
+  var format = function(d) {
+    return '<div style=\"background-color:#eee; padding: .5em;\"> Abstract: ' +
+            d[3] + '</div>' +
+           '<div style=\"background-color:#eee; padding: .5em;\"> ID: ' + d[4] + '</div>';
+  };
+  table.on('click', 'td.details-control', function() {
+    var td = $(this), row = table.row(td.closest('tr'));
+    if (row.child.isShown()) {
+      row.child.hide();
+      td.html('&oplus;');
+    } else {
+      row.child(format(row.data())).show();
+      td.html('&CircleMinus;');
+    }
+  });"))
     
-  }) # end Render OK
+    # render output
+    output$table <- renderDT(DT)
+    
+  }) # end Render environement
   
 }
 
