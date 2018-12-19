@@ -3,6 +3,7 @@
 ## Introduction
 
 This work is the result of a four-month period of work for academic purpose. The objectif of our project is to build a tool able to find documents of interest regarding a postive and a negative query. Powerpoints presentations are available on the "Presentation" forlder with the bibliography. All the objectives are explained in those slides and the report for this work is also available.
+Further explanation of the code are available in the form of Rmarkdown files.
 
 Finally, we manage to make an application on shinyapps able to treat and sort revelant documents regarding user's query's.
 
