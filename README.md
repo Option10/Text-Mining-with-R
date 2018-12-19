@@ -6,6 +6,22 @@ This work is the result of a four-month period of work for academic purpose. The
 
 Finally, we manage to make an application on shinyapps able to treat and sort revelant documents regarding user's query's.
 
+## Code packages : 
+
+Main.R : Core of the code. Here the user can chose if he wants to make a new calculus for LDA, LSA or the tokenization, change the hyperparamter k and use new dataset. It's in this part of the code that query's are implemented. It will then uses the outputs of the functions below to run the application.
+
+Extract_Data.R : This code takes all documents from the PubMed database, preprocess them to make the abstracts readabel for the app and identifying every abstract with its ID. Finally, we create a dataframe will all those documents.
+
+LDA.R : The code use the dataframe of tokens to implement the LDA algorithm and calculate the gamma and beta values.
+
+LDA_query_system.R : Here the code uses the output of LDA.R to implement the query system. Query's are taken from the main.R
+
+LSA.R and LSA_query_system.R : Works exactly the same as for the LDA algorithm.
+
+Tokenization.R : Function to transform words from documents into tokens (i.e. every word becomes a row in the dataframe). It will also remove all stopwords.
+
+Load.packages.R : Function to download all packages needed in the functions above.
+
 ## How to run the app
 
 - Make sure you have R installed  
@@ -26,25 +42,7 @@ Finally, we manage to make an application on shinyapps able to treat and sort re
   
 - Run app.R and start querying  
 
-
-
 The ShinyApps can be hosted on a server so the final user can access it without having R installed
-
-## Code packages : 
-
-Main.R : Core of the code. Here the user can chose if he wants to make a new calculus for LDA, LSA or the tokenization, change the hyperparamter k and use new dataset. It's in this part of the code that query's are implemented. It will then uses the outputs of the functions below to run the application.
-
-Extract_Data.R : This code takes all documents from the PubMed database, preprocess them to make the abstracts readabel for the app and identifying every abstract with its ID. Finally, we create a dataframe will all those documents.
-
-LDA.R : The code use the dataframe of tokens to implement the LDA algorithm and calculate the gamma and beta values.
-
-LDA_query_system.R : Here the code uses the output of LDA.R to implement the query system. Query's are taken from the main.R
-
-LSA.R and LSA_query_system.R : Works exactly the same as for the LDA algorithm.
-
-Tokenization.R : Function to transform words from documents into tokens (i.e. every word becomes a row in the dataframe). It will also remove all stopwords.
-
-Load.packages.R : Function to download all packages needed in the functions above.
 
 ## Conclusion 
 
