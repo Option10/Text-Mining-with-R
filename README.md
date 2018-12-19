@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This work is the result of a four-month period of work for academic purpose. The objectif of our project is to build a tool able to find documents of interest regarding a postive and a negative query. Powerpoints presentations are available on the "Presentation" forlder with the bibliography. All the objectives are explained in those slides and the report for this work is also available.
+This work is the result of a four-month period of work for academic purpose. The objectif of our project is to build a tool able to find documents of interest regarding a postive and a negative query. Powerpoints presentations and our report are available in the "Presentations" forlder with the bibliography. All the objectives are well explained. 
 Further explanation of the code are available in the form of Rmarkdown files.
 
 Finally, we manage to make an application on shinyapps able to treat and sort revelant documents regarding user's query's.
@@ -27,6 +27,9 @@ Load.packages.R : Function to download all packages needed in the functions abov
 
 ## How to run the app
 
+The easy way : Make sure a QR code reader is installed on your Smartphone and take a picture of the QR code in the "web_app" folder !
+
+Or : 
 - Make sure you have R installed  
 - The first line of the Source/main.R and the GUI/app.R is to set the working directory (path to Text_mining_project)  
 - TIP: to get the path to the current working directory, type getwd() in your console
@@ -37,6 +40,7 @@ Load.packages.R : Function to download all packages needed in the functions abov
 - Run main.R (it should fill the Data dir with some cool files)
 - Run app.R and start querying  
 The ShinyApps can be hosted on a server so the final user can access it without having R installed
+
 
 ## Conclusion 
 
