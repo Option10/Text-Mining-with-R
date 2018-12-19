@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This work is the result of a four-month period of work for academic purpose. The objectif of our project is to build a tool able to find documents of interest regarding a postive and a negative query. Powerpoints presentations are available on the "Presentation" forlder with the bibliography. All the objectives are explained in those slides.
+This work is the result of a four-month period of work for academic purpose. The objectif of our project is to build a tool able to find documents of interest regarding a postive and a negative query. Powerpoints presentations are available on the "Presentation" forlder with the bibliography. All the objectives are explained in those slides and the report for this work is also available.
 
 Finally, we manage to make an application on shinyapps able to treat and sort revelant documents regarding user's query's.
 
@@ -45,6 +45,23 @@ LSA.R and LSA_query_system.R : Works exactly the same as for the LDA algorithm.
 Tokenization.R : Function to transform words from documents into tokens (i.e. every word becomes a row in the dataframe). It will also remove all stopwords.
 
 Load.packages.R : Function to download all packages needed in the functions above.
+
+## Conclusion 
+
+This project is a result of a four-month period of work, and we are aware of its limits. 
+
+The user interface is very intuitive, and the user can select the algorithm he wants for its research. 
+Both LSA and LDA work pretty well, they both have their pros and cons.
+
+LSA will be preferentially used when the user knows what kind of documents he wants. The user can also put several words in his query’s, something LDA can’t do.
+
+On the other hand, LDA will be very useful when users want a more prospective approach.
+Furthermore, we have observed that LSA algorithm deals more with the frequencies of words and select documents with a very high frequency for the researched word. LDA in contrast will select documents dealing mainly with all the “concepts” behind the query. If the positive query is “cancer”, LDA will select documents dealing with cancer but also tumor, metastasis etc.
+
+Finally, one thing we can discuss is the weighting of the beta and gamma values for the LDA and the Euclidean distance calculations in LSA.
+Indeed, the weighting we used is a basic normalization of gamma values and a sum between those new gammas with beta values, but others weighting methods may be used. 
+
+For LSA, we’ve chose to measure distance between our query’s and document using an Euclidean distance. We justify this choice because of its simplicity, but other methods may be used.
 
 ## Q&A 
 
