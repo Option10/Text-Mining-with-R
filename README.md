@@ -52,7 +52,7 @@ Both LSA and LDA work pretty well, they both have their pros and cons.
 LSA will be preferentially used when the user knows what kind of documents he wants. The user can also put several words in his query’s, something LDA can’t do.
 
 On the other hand, LDA will be very useful when users want a more prospective approach.
-Furthermore, we have observed that LSA algorithm deals more with the frequencies of words and select documents with a very high frequency for the researched word. LDA in contrast will select documents dealing mainly with all the “concepts” behind the query. If the positive query is “cancer”, LDA will select documents dealing with cancer but also tumor, metastasis etc.
+Furthermore, we have observed that LSA algorithm deals more with the frequencies of words and select documents with a very high frequency for the researched word. LDA in contrast will select documents dealing mainly with all the “concepts” behind the query. If the positive query is “cancer”, LDA will select documents dealing with cancer but also tumor, metastasis etc. Then, the value on hyperparameters may be discussed and further investigation on those value for research's accuracy have to be leaded. 
 
 Finally, one thing we can discuss is the weighting of the beta and gamma values for the LDA and the Euclidean distance calculations in LSA.
 Indeed, the weighting we used is a basic normalization of gamma values and a sum between those new gammas with beta values, but others weighting methods may be used. 
