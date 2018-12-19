@@ -2,8 +2,8 @@
 
 ## Introduction
 
-This work is the result of a four-month period of work for academic purpose. The objectif of our project is to build a tool able to find documents of interest regarding a postive and a negative query. Powerpoints presentations and our report are available in the "Presentations" forlder with the bibliography. All the objectives are well explained. 
-Further explanation of the code are available in the form of Rmarkdown files.
+This work is the result of a four-month period of work for academic purpose. The objectif of our project is to build a tool able to find documents of interest regarding a postive and a negative query. Powerpoints presentations and our report are available in the "Presentations" forlder with the bibliography also all the objectives are explained. 
+Further explanations of the code are available in the form of Rmarkdown files.
 
 Finally, we manage to make an application on shinyapps able to treat and sort revelant documents regarding user's query's.
 
