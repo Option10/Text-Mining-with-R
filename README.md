@@ -8,6 +8,8 @@ Finally, we manage to make an application on shinyapps able to treat and sort re
 
 ## Code packages : 
 
+app.R : R code for the application module. All parts of codes below needs to be saved in the same directory to run the app.
+
 Main.R : Core of the code. Here the user can chose if he wants to make a new calculus for LDA, LSA or the tokenization, change the hyperparamter k and use new dataset. It's in this part of the code that query's are implemented. It will then uses the outputs of the functions below to run the application.
 
 Extract_Data.R : This code takes all documents from the PubMed database, preprocess them to make the abstracts readabel for the app and identifying every abstract with its ID. Finally, we create a dataframe will all those documents.
@@ -25,23 +27,14 @@ Load.packages.R : Function to download all packages needed in the functions abov
 ## How to run the app
 
 - Make sure you have R installed  
-
 - The first line of the Source/main.R and the GUI/app.R is to set the working directory (path to Text_mining_project)  
-
 - TIP: to get the path to the current working directory, type getwd() in your console
-  
   example: setwd("C:/Users/Brieuc/Documents/Text_mining_project")
-
 - The packages are installed automaticly  
-
 - Choose the parameters you want in the Source/main.R  
-
 - Check if you have the database.xml in the Data directory  
-
 - Run main.R (it should fill the Data dir with some cool files)
-  
 - Run app.R and start querying  
-
 The ShinyApps can be hosted on a server so the final user can access it without having R installed
 
 ## Conclusion 
